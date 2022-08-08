@@ -1,6 +1,22 @@
-﻿#include <iostream>
+﻿//C++ Standard Library Includes
+#include <iostream>
 
-int main()
-{
-    std::cout << "Hello World!\n";
+//Custom Include Files
+#include "Tools.hpp"
+#include "Arrow.hpp"
+
+
+
+
+int main(){
+
+	raylib::Window window(screenWidth, screenHeight, "BOO NOOB");
+
+	MyCamera cam();
+	
+	
+
+	window.SetTargetFPS(120);
+
+
 }

@@ -21,6 +21,9 @@
     <ClCompile Include="Bases.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Arrow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bases.hpp">

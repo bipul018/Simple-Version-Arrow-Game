@@ -1,5 +1,9 @@
 #include "Bases.hpp"
 
+
+const char* ModelGen::fileModelNames[END_OF_LIST];
+GameModel::State ModelGen::fileModelStates[END_OF_LIST];
+bool ModelGen::isInitialized = false;
 GameModel::State::State(Vec3 position, Vec3 frontDir, Vec3 upDir, Vec3 scaleVal, float angle) :
 	pos(position), front(frontDir.Normalize()), up(upDir.Normalize()), scale(scaleVal), angledir(angle) {
 	if (front.DotProduct(up) != 0) {
@@ -54,17 +58,23 @@ raylib::Matrix GameModel::state_transition(State from, State to){
 }
 
 ModelGen::ModelGen(){
-
+	if (!isInitialized)
+		initialize_statics();
 }
 
 ModelGen::ModelGen(FileModels modelid){
+	if (!isInitialized)
+		initialize_statics();
 	if (static_cast<int>(modelid) < 0) {
 		switch (modelid) {
-		case UNIT_RADIUS_UNIT_HEIGHT_CYL_CENTER:
-
+		case UNIT_CYL_CENTER:
+			mesh = new raylib::Mesh(raylib::Mesh::Cylinder(1, 1, 30));
+			model = new raylib::Model(*mesh);
 			return;
 		case UNIT_CUBE_CENTER:
 
+			mesh = new raylib::Mesh(raylib::Mesh::Cube(1, 1, 1));
+			model = new raylib::Model(*mesh);
 			return;
 		default:
 			throw std::string("Error, invalid / unregistered id model requested.\n");
@@ -95,7 +105,6 @@ GameModel::State ModelGen::get_model_state() const{
 }
 
 void ModelGen::initialize_statics(){
-
 	fileModelNames[PERSON] = "model.iqm";
 	fileModelNames[BOW] = "model_bow.iqm";
 
@@ -109,19 +118,20 @@ void ModelGen::initialize_statics(){
 	fileModelStates[BOW] = GameModel::State(
 		Vec3(0, 0, 0), right * -1, front, Vec3(1, 1, 1), PI / 2
 	);
-
 }
 
 GameModel::State ModelGen::return_state(ModelGen::FileModels model){
 	switch (model) {
 
-	case FileModels::FINAL:
+	case FileModels::END_OF_LIST:
 		throw std::string("Invalid model state requested.");
 	case FileModels::UNIT_CUBE_CENTER:
 		return GameModel::State();
+	case FileModels::UNIT_CYL_CENTER:
+		return GameModel::State();
 	default:
-		if (static_cast<int>(model) >= 0)
-			return fileModelStates[model];
+		if (static_cast<int>(model) >= 0 && (static_cast<int>(model)< static_cast<int>(END_OF_LIST)))
+			return fileModelStates[static_cast<int>(model)];
 	}
 	throw std::string("No Model Found, internal error");
 }

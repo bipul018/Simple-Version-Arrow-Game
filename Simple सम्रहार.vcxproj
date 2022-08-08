@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="Bases.cpp" />
     <ClCompile Include="Simple सम्रहार.cpp" />
   </ItemGroup>

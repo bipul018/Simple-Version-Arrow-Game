@@ -44,9 +44,10 @@ class ModelGen {
 
 public:
 	enum FileModels {
-		UNIT_RADIUS_UNIT_HEIGHT_CYL_CENTER,
-		UNIT_CUBE_CENTER = -1,
-		PERSON,
+		TOP_OF_LIST = -3,
+		UNIT_CYL_CENTER,
+		UNIT_CUBE_CENTER ,
+		PERSON=0,
 		BOW,
 		END_OF_LIST
 	};
@@ -59,14 +60,14 @@ public:
 	raylib::Model& get_this_model() const;
 	GameModel::State get_model_state() const;
 	friend class GameModel;
-	static void initialize_statics();
 	static GameModel::State return_state(ModelGen::FileModels model);
 private:
+	static void initialize_statics();
 	raylib::Model* model = nullptr;
 	raylib::Mesh* mesh = nullptr;
 	FileModels modelID = END_OF_LIST;
 
 	static const char* fileModelNames[END_OF_LIST];
 	static GameModel::State fileModelStates[END_OF_LIST];
-
+	static bool isInitialized;
 };
