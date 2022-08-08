@@ -7,9 +7,15 @@ constexpr int screenHeight = 900;
 using Vec2 = raylib::Vector2;
 using Vec3 = raylib::Vector3;
 using Vec4 = raylib::Vector4;
-const Vec3 front(0, 0, 1);  //0 0 1
-const Vec3 up(0, 1, 0);		//0 1 0
-const Vec3 right(1, 0, 0);	//ok
+const Vec3 D_Front(0, 0, 1);  //0 0 1
+const Vec3 D_Up(0, 1, 0);		//0 1 0
+const Vec3 D_Right(1, 0, 0);	//ok
+
+const Vec3 D_Length(0, 0, 1);
+const Vec3 D_Height(0, 1, 0);
+const Vec3 D_Width(1, 0, 0);
+
+
 #undef PI
 const float PI = acos(0) * 2;
 //Taken from Person model view, 1 unit ~ 1 feet
@@ -28,8 +34,8 @@ public:
 		Vec3 up;
 		Vec3 scale;
 		float angledir;
-		State(Vec3 position = Vec3(0, 0, 0), Vec3 frontDir = ::front,
-			Vec3 upDir = ::up, Vec3 scale = Vec3(1, 1, 1), float angle = PI / 2);
+		State(Vec3 position = Vec3(0, 0, 0), Vec3 frontDir = D_Front,
+			Vec3 upDir = D_Up, Vec3 scale = Vec3(1, 1, 1), float angle = PI / 2);
 	};
 
 	static raylib::Matrix state_transition(State from, State to);

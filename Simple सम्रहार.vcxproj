@@ -141,11 +141,13 @@
   <ItemGroup>
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="Bases.cpp" />
+    <ClCompile Include="Obstacles.cpp" />
     <ClCompile Include="Simple सम्रहार.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arrow.hpp" />
     <ClInclude Include="Bases.hpp" />
+    <ClInclude Include="Obstacles.hpp" />
     <ClInclude Include="Target.hpp" />
     <ClInclude Include="Tools.hpp" />
   </ItemGroup>

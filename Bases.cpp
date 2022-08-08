@@ -70,11 +70,13 @@ ModelGen::ModelGen(FileModels modelid){
 		case UNIT_CYL_CENTER:
 			mesh = new raylib::Mesh(raylib::Mesh::Cylinder(1, 1, 30));
 			model = new raylib::Model(*mesh);
+			modelID = UNIT_CYL_CENTER;
 			return;
 		case UNIT_CUBE_CENTER:
 
 			mesh = new raylib::Mesh(raylib::Mesh::Cube(1, 1, 1));
 			model = new raylib::Model(*mesh);
+			modelID = UNIT_CUBE_CENTER;
 			return;
 		default:
 			throw std::string("Error, invalid / unregistered id model requested.\n");
@@ -84,6 +86,7 @@ ModelGen::ModelGen(FileModels modelid){
 		throw std::string("Model id somehow beyond list requested.\n");
 
 	model = new raylib::Model(fileModelNames[modelid]);
+	modelID = modelid;
 }
 
 ModelGen::~ModelGen(){
@@ -110,13 +113,13 @@ void ModelGen::initialize_statics(){
 
 	fileModelStates[PERSON] = GameModel::State(
 		Vec3(0, 0, 0),
-		Vec3(up * (1)),
-		Vec3(front * (1)),
+		Vec3(D_Up * (1)),
+		Vec3(D_Front * (1)),
 		Vec3(1.0, 1.0, 1.0),
 		PI / 2);
 
 	fileModelStates[BOW] = GameModel::State(
-		Vec3(0, 0, 0), right * -1, front, Vec3(1, 1, 1), PI / 2
+		Vec3(0, 0, 0), D_Right * -1, D_Front, Vec3(1, 1, 1), PI / 2
 	);
 }
 
