@@ -24,6 +24,10 @@ public:
 
 	MyCamera& Update();
 
+	Vec2 getDelAngle() const;
+
+	MyCamera& changeAngles(Vec2 delAngle);
+
 	void SetMouse(MyMouse* mptr);
 
 //private:
@@ -35,3 +39,4 @@ public:
 	Vec2 currAngles = Vec2(0, 0);
 
 };
+

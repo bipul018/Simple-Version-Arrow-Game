@@ -33,7 +33,15 @@ std::ostream& operator<<(std::ostream& os, const Vec2& m) {
 int main(){
 
 	raylib::Window window(screenWidth, screenHeight, "BOO NOOB");
-	//window.SetFullscreen(true);
+	
+
+	Vec2 size(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
+	screenWidth = size.x;
+	screenHeight = size.y;
+
+	window.SetSize(size);
+
+	window.SetFullscreen(true);
 
 	Vec3 originalPos = D_Front * -5 + D_Up * 6;
 	Vec3 originalTar = originalPos + D_Front *3;
@@ -45,20 +53,59 @@ int main(){
 	cam.fovy = 60.0f;	
 	cam.projection = CAMERA_PERSPECTIVE;
 
-	Arrow arr(originalTar //+ D_Left * 1.5 / 2
+	Arrow arr(originalTar - D_Left*0.25
 		, D_Front, D_Up,1.5);
 	
 	
-	arr.rotateVertical(PI / 4);
-	arr.velocity = arr.getFront() * 8;
+	arr.rotateVertical(PI / 60);
+	arr.velocity = arr.getFront() * 10;
+
+
+	MyCamera arrowCam;
+	arrowCam.SetMode(CAMERA_CUSTOM);
+
+
 
 	MyMouse mouse;
 	mouse.hideCursor().disableCursor();
 
 	cam.SetMouse(&mouse);
 
+
+
+
 	window.SetTargetFPS(120);
+
 	while (!window.ShouldClose()) {
+		
+		window.BeginDrawing();
+		window.ClearBackground(SKYBLUE);
+		
+		cam.BeginMode();
+		
+		DrawPlane(Vec3(0, 0, 0), Vec2(20, 20), GREEN);
+		DrawTriangle3D(D_Front * 10 + D_Left * 10,
+			D_Front * 10 - D_Left * 10,
+			D_Front * 10 - D_Left * 10 + D_Up * 10,GREEN);
+		DrawTriangle3D(D_Front * 10 + D_Left * 10,
+			D_Front * 10 - D_Left * 10 + D_Up * 10,
+			D_Front * 10 + D_Left * 10 + D_Up * 10,GREEN);
+		
+		arr.draw();
+
+		cam.EndMode();
+	
+		std::stringstream ss;
+		
+		ss << "FPS : " << GetFPS() << std::endl
+			<< "Mouse position : " << GetMousePosition() << std::endl
+			<< "Mouse Delta : " << GetMouseDelta() << std::endl
+			<< "My Mouse Delta : " << mouse.getDelta() << std::endl
+			<< "My Camera Angles : " << cam.currAngles * 180 / PI << std::endl;
+
+		DrawText(ss.str().c_str(), 10, 10, 10, MAROON);
+
+		window.EndDrawing();
 		//For full screen 
 		if (IsKeyReleased(KEY_SPACE)) {
 			if (window.IsFullscreen()) {
@@ -75,30 +122,10 @@ int main(){
 		cam.Update();
 		mouse.limitInScreen();
 
-		//arr.translateByVel();
+		arr.translateByVel();
 		arr.rotateToVel();
-		arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.1;
+		arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.01;
 
-		window.BeginDrawing();
-		window.ClearBackground(SKYBLUE);
-
-		cam.BeginMode();
-		
-		DrawPlane(Vec3(0, 0, 0), Vec2(100, 100), GREEN);
-		arr.draw();
-
-		cam.EndMode();
-	
-		std::stringstream ss;
-		
-		ss << "Mouse position : " << GetMousePosition() << std::endl
-			<< "Mouse Delta : " << GetMouseDelta() << std::endl
-			<< "My Mouse Delta : " << mouse.getDelta() << std::endl
-			<< "My Camera Angles : " << cam.currAngles * 180 / PI << std::endl;
-
-		DrawText(ss.str().c_str(), 10, 10, 10, MAROON);
-
-		window.EndDrawing();
 	}
 
 }

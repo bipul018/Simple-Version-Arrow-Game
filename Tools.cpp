@@ -10,12 +10,16 @@ Vec3 MyCamera::getLookDir() const {
 
 MyCamera& MyCamera::Update() {
 
+	return changeAngles(getDelAngle());
+}
+
+Vec2 MyCamera::getDelAngle() const {
 	//Updates Based on our own mpuse derived one
 	if (mouseptr == nullptr)
-		return *this;
-	Vec2 delMouse = mouseptr->getDelta();
-	
-	
+		return Vec2(0, 0);
+	Vec2 delMouse = mouseptr->getDelta() * -1;
+
+
 	Vec2 delAngle = screenAngles * delMouse / Vec2(screenWidth, screenHeight);
 	if (maxAngles.x != 0)
 		if (((delAngle.x + currAngles.x) <= -maxAngles.x) || ((delAngle.x + currAngles.x) >= maxAngles.x))
@@ -23,6 +27,10 @@ MyCamera& MyCamera::Update() {
 	if (maxAngles.y != 0)
 		if (((delAngle.y + currAngles.y) <= -maxAngles.y) || ((delAngle.y + currAngles.y) >= maxAngles.y))
 			delAngle.y = 0;
+	return delAngle;
+}
+
+MyCamera& MyCamera::changeAngles(Vec2 delAngle) {
 	currAngles += delAngle;
 	up = Vec3(up).Normalize();
 	Vec3 front = getLookDir() - Vec3(up) * Vec3(up).DotProduct(getLookDir());
@@ -33,7 +41,7 @@ MyCamera& MyCamera::Update() {
 	front = getLookDir().RotateByQuaternion(Vec4::FromAxisAngle(up, delAngle.x))
 		.RotateByQuaternion(Vec4::FromAxisAngle(right, delAngle.y));
 
-	setLookDir(front);	
+	setLookDir(front);
 	return *this;
 }
 
