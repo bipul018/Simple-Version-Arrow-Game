@@ -27,6 +27,10 @@ public:
 
 	Vec3 getCenter() const;
 
+	Vec3 getHead() const;
+
+	Vec3 getTail() const;
+
 	State getState() const;
 
 	void draw();

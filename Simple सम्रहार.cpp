@@ -76,6 +76,9 @@ int main(){
 
 	window.SetTargetFPS(120);
 
+	bool justCollided = false;
+	double collideTime = 0;
+
 	while (!window.ShouldClose()) {
 		
 		window.BeginDrawing();
@@ -103,7 +106,8 @@ int main(){
 			<< "Mouse Delta : " << GetMouseDelta() << std::endl
 			<< "My Mouse Delta : " << mouse.getDelta() << std::endl
 			<< "My Camera Angles : " << cam.currAngles * 180 / PI << std::endl;
-
+		if (justCollided)
+			ss << "It Just Collided at : " << arr.getHead() << std::endl;
 		DrawText(ss.str().c_str(), 10, 10, 10, MAROON);
 
 		window.EndDrawing();
@@ -119,15 +123,22 @@ int main(){
 			screenWidth = size.x;
 			screenHeight = size.y;
 		}
+		if (justCollided)
+			cam.Update();
+		else
 
-		//cam.Update();
-		cam.lookAt(arr.getState(), D_Front * -3 + D_Left * 0.5);
+			//This follows the arrow 
+			cam.lookAt(arr.getState(), D_Front * -3 + D_Left * 0.5);
+		
 		mouse.limitInScreen();
-
-		arr.translateByVel();
-		arr.rotateToVel();
-		//arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.01;
-
+		if (!justCollided) {
+			arr.translateByVel();
+			arr.rotateToVel();
+			//arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.01;
+		}
+		//This is collision detection part 
+		if (arr.getHead().DotProduct(D_Front) >= 10)
+			justCollided = true;
 	}
 
 }

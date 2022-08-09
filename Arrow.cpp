@@ -73,6 +73,14 @@ Vec3 Arrow::getCenter() const {
 	return currState.pos;
 }
 
+Vec3 Arrow::getHead() const {
+	return  Vec3(currState.pos) + currState.front * 0.5 * Vec3(currState.scale).DotProduct(D_Length);
+}
+
+Vec3 Arrow::getTail() const {
+	return  Vec3(currState.pos) - currState.front * 0.5 * Vec3(currState.scale).DotProduct(D_Length);
+}
+
 GameModel::State Arrow::getState() const {
 	return currState;
 }
