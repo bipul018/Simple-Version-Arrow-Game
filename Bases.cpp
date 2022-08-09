@@ -94,6 +94,18 @@ ModelGen::ModelGen(FileModels modelid){
 	modelID = modelid;
 }
 
+
+
+ModelGen& ModelGen::operator =(ModelGen&& model2) {
+	model = model2.model;
+	mesh = model2.mesh;
+	model2.mesh = nullptr;
+	model2.model = nullptr;
+	modelID = model2.modelID;
+	model2.modelID = END_OF_LIST;
+	return *this;
+}
+
 ModelGen::~ModelGen(){
 
 	if (model != nullptr)

@@ -49,7 +49,8 @@ int main(){
 	//	, cam.getLookDir().CrossProduct(cam.up), cam.up,1.5);
 	//
 	
-	Arrow arr(originalTar, cam.getLookDir().CrossProduct(cam.up).Normalize(), cam.up, 1.5);
+	Arrow arr(originalTar, cam.getLookDir(), cam.up, 1.5);
+	//Arrow arr(originalTar, cam.getLookDir().CrossProduct(cam.up).Normalize(), cam.up, 1.5);
 	/*Arrow arr(originalTar+ cam.getLookDir().Normalize() * 1.5 / 2
 		, cam.getLookDir(), cam.up,1.5);
 	*/
@@ -70,16 +71,12 @@ int main(){
 		cam.BeginMode();
 		
 		DrawPlane(Vec3(0, 0, 0), Vec2(100, 100), GREEN);
-		DrawSphere(originalPos, 0.05, RED);
-		DrawSphere(originalTar, 0.05, GRAY);
+		//DrawSphere(originalPos, 0.05, RED);
+		DrawSphere(originalTar, 0.01, YELLOW);
 		arr.draw();
 
 		cam.EndMode();
-		cam.BeginMode();
-		DrawSphere(Vec3(0, 0, 0), 0.05, BLUE);
-
-		cam.EndMode();
-
+	
 		std::stringstream ss;
 		
 		ss << "Mouse position : " << GetMousePosition() << std::endl

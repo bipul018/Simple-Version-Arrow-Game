@@ -63,7 +63,7 @@ public:
 	ModelGen(FileModels modelid);
 	ModelGen(const ModelGen&) = delete;
 	~ModelGen();
-	ModelGen& operator =(ModelGen&& model2) = default;
+	ModelGen& operator =(ModelGen&& model2);
 	raylib::Model& get_this_model() const;
 	GameModel::State get_model_state() const;
 	friend class GameModel;

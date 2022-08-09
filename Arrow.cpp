@@ -2,8 +2,8 @@
 
 Arrow::Arrow(Vec3 pos, Vec3 front, Vec3 up, float len) :
 	defaultState(pos, front, up, Vec3(D_Length * len + D_Height * 0.035 * len + D_Width * 0.035 * len)) {
-	arrowBody = ModelGen(ModelGen::UNIT_CUBE_CENTER);
-	arrowHead = ModelGen(ModelGen::UNIT_SQ_PYR_BOTTOM);
+	arrowBody = std::move(ModelGen(ModelGen::UNIT_CUBE_CENTER));
+	arrowHead = std::move(ModelGen(ModelGen::UNIT_SQ_PYR_BOTTOM));
 	currState = defaultState;
 }
 
@@ -52,5 +52,5 @@ void Arrow::rotateToVel() {
 void Arrow::draw(){
 	setupTransform();
 	arrowBody.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
-	arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, YELLOW);
+	//arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, YELLOW);
 }
