@@ -7,6 +7,10 @@ public:
 	
 	void spin(float angle = PI / 180);
 
+	void rotateVertical(float angle = PI / 180);
+
+	void rotateHorizontal(float angle = PI / 180);
+
 	void setupTransform();
 
 	void resetArrow();
@@ -16,6 +20,12 @@ public:
 	void translateByVel();
 
 	void rotateToVel();
+
+	Vec3 getFront() const;
+	
+	Vec3 getUp() const;
+
+	Vec3 getCenter() const;
 
 	void draw();
 

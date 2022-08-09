@@ -12,14 +12,26 @@ void Arrow::spin(float angle){
 	currState.up = currState.up.RotateByQuaternion(Vec4::FromAxisAngle(currState.front, angle));
 }
 
+void Arrow::rotateVertical(float angle) {
+	Vec3 right = currState.front.CrossProduct(currState.up);
+	currState.front = currState.front.RotateByQuaternion(Vec4::FromAxisAngle(right, angle));
+	currState.up = currState.up.RotateByQuaternion(Vec4::FromAxisAngle(right, angle));
+}
+
+void Arrow::rotateHorizontal(float angle) {
+	currState.front = currState.front.RotateByQuaternion(Vec4::FromAxisAngle(currState.up, angle));
+}
+
 void Arrow::setupTransform(){
+
 	State temp = currState;
-	temp.scale -= D_Length * temp.scale.DotProduct(D_Length) * 0.035;
-	temp.pos -= D_Length * temp.scale.DotProduct(D_Length) * 0.035 / 2;
+	temp.scale -= D_Length * 0.035 * temp.scale.DotProduct(D_Length);
+	temp.pos -= temp.front * 0.035 * 0.5 * temp.scale.DotProduct(D_Length);
+
 	arrowBody.get_this_model().transform = state_transition(arrowBody.get_model_state(), temp);
 
 	temp.scale = currState.scale - D_Length * (1 - 0.035) * currState.scale.DotProduct(D_Length);
-	temp.pos = currState.pos + D_Length * (0.5 - 0.035) * currState.scale.DotProduct(D_Length);
+	temp.pos = currState.pos + currState.front * (0.5 - 0.035) * currState.scale.DotProduct(D_Length);
 	arrowHead.get_this_model().transform = state_transition(arrowHead.get_model_state(), temp);
 }
 
@@ -49,8 +61,20 @@ void Arrow::rotateToVel() {
 	currState.front = velocity.Normalize();
 }
 
+Vec3 Arrow::getFront() const {
+	return currState.front;
+}
+
+Vec3 Arrow::getUp() const {
+	return currState.up;
+}
+
+Vec3 Arrow::getCenter() const {
+	return currState.pos;
+}
+
 void Arrow::draw(){
 	setupTransform();
 	arrowBody.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
-	//arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, YELLOW);
+	arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
 }

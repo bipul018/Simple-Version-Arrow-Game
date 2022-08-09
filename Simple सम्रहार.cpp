@@ -33,28 +33,24 @@ std::ostream& operator<<(std::ostream& os, const Vec2& m) {
 int main(){
 
 	raylib::Window window(screenWidth, screenHeight, "BOO NOOB");
+	//window.SetFullscreen(true);
 
-
-	Vec3 originalPos = D_Length * -5 + D_Up * 6;
-	Vec3 originalTar = originalPos + D_Length*4;
+	Vec3 originalPos = D_Front * -5 + D_Up * 6;
+	Vec3 originalTar = originalPos + D_Front *3;
 	MyCamera cam;
 	cam.SetMode(CAMERA_CUSTOM);
 	cam.position = originalPos;
 	cam.target = originalTar;
 	cam.up = Vec3(0.0f, 1.0f, 0.0f);
-	cam.fovy = 60.0f;
+	cam.fovy = 60.0f;	
 	cam.projection = CAMERA_PERSPECTIVE;
 
-	//Arrow arr(originalTar+ cam.getLookDir().CrossProduct(cam.up).Normalize() * 1.5 / 2
-	//	, cam.getLookDir().CrossProduct(cam.up), cam.up,1.5);
-	//
+	Arrow arr(originalTar //+ D_Left * 1.5 / 2
+		, D_Front, D_Up,1.5);
 	
-	Arrow arr(originalTar, cam.getLookDir(), cam.up, 1.5);
-	//Arrow arr(originalTar, cam.getLookDir().CrossProduct(cam.up).Normalize(), cam.up, 1.5);
-	/*Arrow arr(originalTar+ cam.getLookDir().Normalize() * 1.5 / 2
-		, cam.getLookDir(), cam.up,1.5);
-	*/
-	arr.velocity = arr.velocity ;
+	
+	arr.rotateVertical(PI / 4);
+	arr.velocity = arr.getFront() * 8;
 
 	MyMouse mouse;
 	mouse.hideCursor().disableCursor();
@@ -63,16 +59,32 @@ int main(){
 
 	window.SetTargetFPS(120);
 	while (!window.ShouldClose()) {
+		//For full screen 
+		if (IsKeyReleased(KEY_SPACE)) {
+			if (window.IsFullscreen()) {
+				window.SetFullscreen(false);
+			}
+			else {
+				window.SetFullscreen(true);
+			}
+			Vec2 size = window.GetSize();
+			screenWidth = size.x;
+			screenHeight = size.y;
+		}
+
 		cam.Update();
 		mouse.limitInScreen();
+
+		//arr.translateByVel();
+		arr.rotateToVel();
+		arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.1;
+
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
 
 		cam.BeginMode();
 		
 		DrawPlane(Vec3(0, 0, 0), Vec2(100, 100), GREEN);
-		//DrawSphere(originalPos, 0.05, RED);
-		DrawSphere(originalTar, 0.01, YELLOW);
 		arr.draw();
 
 		cam.EndMode();

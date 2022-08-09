@@ -1,8 +1,8 @@
 #pragma once
 #include <raylib-cpp.hpp>
 
-constexpr int screenWidth = 1800;
-constexpr int screenHeight = 900;
+extern int screenWidth;
+extern int screenHeight;
 
 using Vec2 = raylib::Vector2;
 using Vec3 = raylib::Vector3;

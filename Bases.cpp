@@ -1,6 +1,9 @@
 #include "Bases.hpp"
 
 
+extern int screenWidth = 1800;
+extern int screenHeight = 900;
+
 const char* ModelGen::fileModelNames[END_OF_LIST];
 GameModel::State ModelGen::fileModelStates[END_OF_LIST];
 bool ModelGen::isInitialized = false;
@@ -79,7 +82,7 @@ ModelGen::ModelGen(FileModels modelid){
 			modelID = UNIT_CUBE_CENTER;
 			return;
 		case UNIT_SQ_PYR_BOTTOM:
-			mesh = new raylib::Mesh(GenMeshCone(sqrt(2), 1, 4));
+			mesh = new raylib::Mesh(GenMeshCone(sqrt(0.5), 1, 4));
 			model = new raylib::Model(*mesh);
 			modelID = UNIT_SQ_PYR_BOTTOM;
 			return;
