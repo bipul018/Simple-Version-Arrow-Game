@@ -119,7 +119,7 @@ void ModelGen::initialize_statics(){
 		PI / 2);
 
 	fileModelStates[BOW] = GameModel::State(
-		Vec3(0, 0, 0), D_Right * -1, D_Front, Vec3(1, 1, 1), PI / 2
+		Vec3(0, 0, 0), D_Left * -1, D_Front, Vec3(1, 1, 1), PI / 2
 	);
 }
 

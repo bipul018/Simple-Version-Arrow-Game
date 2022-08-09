@@ -143,6 +143,7 @@
     <ClCompile Include="Bases.cpp" />
     <ClCompile Include="Obstacles.cpp" />
     <ClCompile Include="Simple सम्रहार.cpp" />
+    <ClCompile Include="Tools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arrow.hpp" />

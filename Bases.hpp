@@ -9,7 +9,7 @@ using Vec3 = raylib::Vector3;
 using Vec4 = raylib::Vector4;
 const Vec3 D_Front(0, 0, 1);  //0 0 1
 const Vec3 D_Up(0, 1, 0);		//0 1 0
-const Vec3 D_Right(1, 0, 0);	//ok
+const Vec3 D_Left(1, 0, 0);	//ok
 
 const Vec3 D_Length(0, 0, 1);
 const Vec3 D_Height(0, 1, 0);
