@@ -2,7 +2,8 @@
 
 Arrow::Arrow(Vec3 pos, Vec3 front, Vec3 up, float len) :
 	defaultState(pos, front, up, Vec3(D_Length * len + D_Height * 0.035 * len + D_Width * 0.035 * len)) {
-	arrowModel = ModelGen(ModelGen::UNIT_CUBE_CENTER);
+	arrowBody = ModelGen(ModelGen::UNIT_CUBE_CENTER);
+	arrowHead = ModelGen(ModelGen::UNIT_SQ_PYR_BOTTOM);
 	currState = defaultState;
 }
 
@@ -12,7 +13,14 @@ void Arrow::spin(float angle){
 }
 
 void Arrow::setupTransform(){
-	arrowModel.get_this_model().transform = state_transition(arrowModel.get_model_state(), currState);
+	State temp = currState;
+	temp.scale -= D_Length * temp.scale.DotProduct(D_Length) * 0.035;
+	temp.pos -= D_Length * temp.scale.DotProduct(D_Length) * 0.035 / 2;
+	arrowBody.get_this_model().transform = state_transition(arrowBody.get_model_state(), temp);
+
+	temp.scale = currState.scale - D_Length * (1 - 0.035) * currState.scale.DotProduct(D_Length);
+	temp.pos = currState.pos + D_Length * (0.5 - 0.035) * currState.scale.DotProduct(D_Length);
+	arrowHead.get_this_model().transform = state_transition(arrowHead.get_model_state(), temp);
 }
 
 void Arrow::resetArrow() {
@@ -43,5 +51,6 @@ void Arrow::rotateToVel() {
 
 void Arrow::draw(){
 	setupTransform();
-	arrowModel.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
+	arrowBody.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
+	arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, YELLOW);
 }

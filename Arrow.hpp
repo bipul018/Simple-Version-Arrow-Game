@@ -23,7 +23,8 @@ public:
 	Vec3 velocity = D_Front * 0.5;
 private:
 
-	ModelGen arrowModel;
+	ModelGen arrowBody;
+	ModelGen arrowHead;
 	State currState;
 	const State defaultState;
 };

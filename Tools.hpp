@@ -5,13 +5,13 @@ class MyMouse :public raylib::Mouse {
 
 public:
 	using Mouse::Mouse;
-	MyMouse& update();
 	Vec2 getDelta();
-	void limitMouse();
-	void unlimitMouse();
+	MyMouse& limitInScreen();
+	MyMouse& hideCursor();
+	MyMouse& showCursor();
+	MyMouse& disableCursor();
+	MyMouse& enableCursor();
 private:
-	Vec2 prevPos;
-	bool limitedCoor = true;
 };
 
 class MyCamera :public raylib::Camera3D{
@@ -26,11 +26,11 @@ public:
 
 	void SetMouse(MyMouse* mptr);
 
-private:
+//private:
 	MyMouse* mouseptr = nullptr;
 
 	//In radians
-	Vec2 maxAngles = Vec2(PI / 3, PI / 1.99);
+	Vec2 maxAngles = Vec2(PI / 3, PI / 2.02);
 	Vec2 screenAngles = Vec2(PI / 4, PI / 2);
 	Vec2 currAngles = Vec2(0, 0);
 

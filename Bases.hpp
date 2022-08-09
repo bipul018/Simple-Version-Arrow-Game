@@ -50,7 +50,8 @@ class ModelGen {
 
 public:
 	enum FileModels {
-		TOP_OF_LIST = -3,
+		TOP_OF_LIST = -4,
+		UNIT_SQ_PYR_BOTTOM,
 		UNIT_CYL_CENTER,
 		UNIT_CUBE_CENTER ,
 		PERSON=0,

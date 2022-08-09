@@ -78,6 +78,11 @@ ModelGen::ModelGen(FileModels modelid){
 			model = new raylib::Model(*mesh);
 			modelID = UNIT_CUBE_CENTER;
 			return;
+		case UNIT_SQ_PYR_BOTTOM:
+			mesh = new raylib::Mesh(GenMeshCone(sqrt(2), 1, 4));
+			model = new raylib::Model(*mesh);
+			modelID = UNIT_SQ_PYR_BOTTOM;
+			return;
 		default:
 			throw std::string("Error, invalid / unregistered id model requested.\n");
 		}
@@ -91,10 +96,9 @@ ModelGen::ModelGen(FileModels modelid){
 
 ModelGen::~ModelGen(){
 
-	if (!model)
+	if (model != nullptr)
 		delete model;
-	if (!mesh)
-		delete mesh;
+
 }
 
 raylib::Model& ModelGen::get_this_model() const{
@@ -132,6 +136,9 @@ GameModel::State ModelGen::return_state(ModelGen::FileModels model){
 		return GameModel::State();
 	case FileModels::UNIT_CYL_CENTER:
 		return GameModel::State();
+	case FileModels::UNIT_SQ_PYR_BOTTOM:
+		return GameModel::State(Vec3(0, 0, 0), D_Up, Vec3(D_Front).RotateByQuaternion(
+			Vec4::FromAxisAngle(D_Up, PI / 4)));
 	default:
 		if (static_cast<int>(model) >= 0 && (static_cast<int>(model)< static_cast<int>(END_OF_LIST)))
 			return fileModelStates[static_cast<int>(model)];

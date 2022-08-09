@@ -9,34 +9,29 @@ Vec3 MyCamera::getLookDir() const {
 }
 
 MyCamera& MyCamera::Update() {
+
+	//Updates Based on our own mpuse derived one
 	if (mouseptr == nullptr)
 		return *this;
-	//Needs serious refactoring of code, I mean dead serious, 
-	//This part of code is directly copied from random trials in random projects
-	//You really should take care of the static variable you created here, that is the absolute worst
-	
 	Vec2 delMouse = mouseptr->getDelta();
 	
 	
 	Vec2 delAngle = screenAngles * delMouse / Vec2(screenWidth, screenHeight);
-	if(maxAngles.x != 0)
-		if ((delAngle.x + currAngles.x) < maxAngles.x) {
-			if ((delAngle.x + currAngles.x) > -maxAngles.x)
-				currAngles.x += delAngle.x;
-		}
-	if(maxAngles.y != 0)
-		if ((delAngle.y + currAngles.y) < maxAngles.y) {
-			if ((delAngle.y + currAngles.y) > -maxAngles.y)
-				currAngles.y += delAngle.y;
-		}
+	if (maxAngles.x != 0)
+		if (((delAngle.x + currAngles.x) <= -maxAngles.x) || ((delAngle.x + currAngles.x) >= maxAngles.x))
+			delAngle.x = 0;
+	if (maxAngles.y != 0)
+		if (((delAngle.y + currAngles.y) <= -maxAngles.y) || ((delAngle.y + currAngles.y) >= maxAngles.y))
+			delAngle.y = 0;
+	currAngles += delAngle;
 	up = Vec3(up).Normalize();
 	Vec3 front = getLookDir() - Vec3(up) * Vec3(up).DotProduct(getLookDir());
 	front = front.Normalize();
 	Vec3 right = front.CrossProduct(up);
 	float len = getLookDir().Length();
 
-	front = front.RotateByQuaternion(Vec4::FromAxisAngle(up, delAngle.x))
-		.RotateByQuaternion(Vec4::FromAxisAngle(right, currAngles.y));
+	front = getLookDir().RotateByQuaternion(Vec4::FromAxisAngle(up, delAngle.x))
+		.RotateByQuaternion(Vec4::FromAxisAngle(right, delAngle.y));
 
 	setLookDir(front);	
 	return *this;
@@ -46,30 +41,41 @@ void MyCamera::SetMouse(MyMouse* mptr) {
 	mouseptr = mptr;
 }
 
-MyMouse& MyMouse::update() {
-	prevPos = GetPosition();
-	if (limitedCoor) {
-		if (GetX() >= screenWidth)
-			SetX(screenWidth - 1);
-		if (GetY() >= screenHeight)
-			SetY(screenHeight - 1);
-		if (GetX() < 0)
-			SetX(0);
-		if (GetY() < 0)
-			SetX(0);
-	}
 
+Vec2 MyMouse::getDelta() {
+	return  GetMouseDelta();
+}
+
+MyMouse& MyMouse::limitInScreen() {
+	if (GetX() >= screenWidth)
+		SetX(screenWidth - 1);
+	if (GetY() >= screenHeight)
+		SetY(screenHeight - 1);
+	if (GetX() < 0)
+		SetX(0);
+	if (GetY() < 0)
+		SetY(0);
 	return *this;
 }
 
-Vec2 MyMouse::getDelta() {
-	return  GetPosition() - prevPos;
+
+
+MyMouse& MyMouse::hideCursor() {
+	HideCursor();
+	return *this;
 }
 
-void MyMouse::limitMouse() {
-	limitedCoor = true;
+MyMouse& MyMouse::showCursor() {
+	ShowCursor();
+	return *this;
 }
 
-void MyMouse::unlimitMouse() {
-	limitedCoor = false;
+MyMouse& MyMouse::disableCursor() {
+	DisableCursor();
+	return *this;
+}
+
+MyMouse& MyMouse::enableCursor() {
+	EnableCursor();
+	return *this;
 }
