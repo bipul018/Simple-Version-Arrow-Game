@@ -58,7 +58,7 @@ int main(){
 	
 	
 	arr.rotateVertical(PI / 60);
-	arr.velocity = arr.getFront() * 10;
+	arr.velocity = arr.getFront() ;
 
 
 	MyCamera arrowCam;
@@ -84,6 +84,7 @@ int main(){
 		cam.BeginMode();
 		
 		DrawPlane(Vec3(0, 0, 0), Vec2(20, 20), GREEN);
+		DrawPlane(Vec3(10, 0, 10), Vec2(20, 20), BLUE);
 		DrawTriangle3D(D_Front * 10 + D_Left * 10,
 			D_Front * 10 - D_Left * 10,
 			D_Front * 10 - D_Left * 10 + D_Up * 10,GREEN);
@@ -119,12 +120,13 @@ int main(){
 			screenHeight = size.y;
 		}
 
-		cam.Update();
+		//cam.Update();
+		cam.lookAt(arr.getState(), D_Front * -3 + D_Left * 0.5);
 		mouse.limitInScreen();
 
 		arr.translateByVel();
 		arr.rotateToVel();
-		arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.01;
+		//arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.01;
 
 	}
 

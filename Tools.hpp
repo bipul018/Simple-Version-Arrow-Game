@@ -26,6 +26,8 @@ public:
 
 	Vec2 getDelAngle() const;
 
+	MyCamera& lookAt(GameModel::State state, Vec3 relativeDir);
+
 	MyCamera& changeAngles(Vec2 delAngle);
 
 	void SetMouse(MyMouse* mptr);

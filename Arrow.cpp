@@ -73,8 +73,12 @@ Vec3 Arrow::getCenter() const {
 	return currState.pos;
 }
 
+GameModel::State Arrow::getState() const {
+	return currState;
+}
+
 void Arrow::draw(){
 	setupTransform();
 	arrowBody.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
-	arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
+	arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, YELLOW);
 }

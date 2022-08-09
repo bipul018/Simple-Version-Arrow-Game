@@ -30,6 +30,16 @@ Vec2 MyCamera::getDelAngle() const {
 	return delAngle;
 }
 
+MyCamera& MyCamera::lookAt(GameModel::State state, Vec3 relativeDir) {
+
+	target = state.pos;
+	position = Vec3(target) + 
+		relativeDir.RotateByQuaternion(Vec4::FromVector3ToVector3(D_Front, state.front));
+	up = state.up;
+
+	return *this;
+}
+
 MyCamera& MyCamera::changeAngles(Vec2 delAngle) {
 	currAngles += delAngle;
 	up = Vec3(up).Normalize();

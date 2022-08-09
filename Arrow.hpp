@@ -27,6 +27,8 @@ public:
 
 	Vec3 getCenter() const;
 
+	State getState() const;
+
 	void draw();
 
 	Vec4 mCol = DARKBLUE;
