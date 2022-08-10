@@ -32,6 +32,8 @@ public:
 
 	void SetMouse(MyMouse* mptr);
 
+	bool isLikeFirstPerson = false;
+
 //private:
 	MyMouse* mouseptr = nullptr;
 

@@ -6,6 +6,7 @@
 #include "Tools.hpp"
 #include "Arrow.hpp"
 #include "Obstacles.hpp"
+#include "Target.hpp"
 
 //Some debugging tools 
 
@@ -79,28 +80,33 @@ int main(){
 	bool justCollided = false;
 	double collideTime = 0;
 
-	while (!window.ShouldClose()) {
-		
+	cam.isLikeFirstPerson = true;
+	Target target(D_Front * -1, D_Front * 10 + D_Up * 6, 3);
+
+	auto drawGame = [&]() {
+
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
-		
-		cam.BeginMode();
-		
-		DrawPlane(Vec3(0, 0, 0), Vec2(20, 20), GREEN);
-		DrawPlane(Vec3(10, 0, 10), Vec2(20, 20), BLUE);
-		DrawTriangle3D(D_Front * 10 + D_Left * 10,
-			D_Front * 10 - D_Left * 10,
-			D_Front * 10 - D_Left * 10 + D_Up * 10,GREEN);
-		DrawTriangle3D(D_Front * 10 + D_Left * 10,
-			D_Front * 10 - D_Left * 10 + D_Up * 10,
-			D_Front * 10 + D_Left * 10 + D_Up * 10,GREEN);
-		
-		arr.draw();
 
+		cam.BeginMode();
+
+		DrawPlane(Vec3(0, 0, 0), Vec2(20, 20), GREEN);
+
+		//Vertical plane at front
+
+		//DrawTriangle3D(D_Front * 10 + D_Left * 10,
+		//	D_Front * 10 - D_Left * 10,
+		//	D_Front * 10 - D_Left * 10 + D_Up * 10,GREEN);
+		//DrawTriangle3D(D_Front * 10 + D_Left * 10,
+		//	D_Front * 10 - D_Left * 10 + D_Up * 10,
+		//	D_Front * 10 + D_Left * 10 + D_Up * 10,GREEN);
+		//
+		arr.draw();
+		target.draw();
 		cam.EndMode();
-	
+
 		std::stringstream ss;
-		
+
 		ss << "FPS : " << GetFPS() << std::endl
 			<< "Mouse position : " << GetMousePosition() << std::endl
 			<< "Mouse Delta : " << GetMouseDelta() << std::endl
@@ -111,8 +117,28 @@ int main(){
 		DrawText(ss.str().c_str(), 10, 10, 10, MAROON);
 
 		window.EndDrawing();
-		//For full screen 
+
+	};
+	auto drawPause = [&]() {
+		window.BeginDrawing();
+		window.ClearBackground(SKYBLUE);
+
+		DrawText("Game Paused, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
+
+		window.EndDrawing();
+	};
+	bool gamePaused = true;
+	while (!window.ShouldClose()) {
+
+		if (gamePaused)
+			drawPause();
+		else
+			drawGame();
 		if (IsKeyReleased(KEY_SPACE)) {
+			gamePaused = !gamePaused;
+		}
+		//For full screen 
+		if (IsKeyReleased(KEY_F)) {
 			if (window.IsFullscreen()) {
 				window.SetFullscreen(false);
 			}
@@ -123,22 +149,25 @@ int main(){
 			screenWidth = size.x;
 			screenHeight = size.y;
 		}
-		if (justCollided)
-			cam.Update();
-		else
+		if (!gamePaused) {
+			if (justCollided)
+				cam.Update();
+			else
 
-			//This follows the arrow 
-			cam.lookAt(arr.getState(), D_Front * -3 + D_Left * 0.5);
-		
-		mouse.limitInScreen();
-		if (!justCollided) {
-			arr.translateByVel();
-			arr.rotateToVel();
-			//arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.01;
+				//This follows the arrow 
+				cam.lookAt(arr.getState(), D_Front * -3 + D_Left * 0.5);
 		}
-		//This is collision detection part 
-		if (arr.getHead().DotProduct(D_Front) >= 10)
-			justCollided = true;
+		mouse.limitInScreen();
+		if (!gamePaused) {
+			if (!justCollided) {
+				arr.translateByVel();
+				arr.rotateToVel();
+				//arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.01;
+			}
+			//This is collision detection part 
+			if (arr.getHead().DotProduct(D_Front) >= 10)
+				justCollided = true;
+		}
 	}
 
 }

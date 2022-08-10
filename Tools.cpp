@@ -1,7 +1,10 @@
 #include "Tools.hpp"
 
 void MyCamera::setLookDir(Vec3 look) {
-	target = look + position;
+	if (isLikeFirstPerson)
+		position = Vec3(target) - look;
+	else
+		target = look + position;
 }
 
 Vec3 MyCamera::getLookDir() const {
