@@ -28,6 +28,8 @@ public:
 
 	MyCamera& lookAt(GameModel::State state, Vec3 relativeDir);
 
+	MyCamera& lookAt(GameModel::State state, Vec3 relativeDir, Vec3 manualUp);
+
 	MyCamera& changeAngles(Vec2 delAngle);
 
 	void SetMouse(MyMouse* mptr);

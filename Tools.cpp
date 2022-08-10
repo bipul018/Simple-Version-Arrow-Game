@@ -34,11 +34,14 @@ Vec2 MyCamera::getDelAngle() const {
 }
 
 MyCamera& MyCamera::lookAt(GameModel::State state, Vec3 relativeDir) {
+	return lookAt(state, relativeDir, state.up);
+}
 
+MyCamera& MyCamera::lookAt(GameModel::State state, Vec3 relativeDir, Vec3 manualUp) {
 	target = state.pos;
-	position = Vec3(target) + 
+	position = Vec3(target) +
 		relativeDir.RotateByQuaternion(Vec4::FromVector3ToVector3(D_Front, state.front));
-	up = state.up;
+	up = manualUp;
 
 	return *this;
 }

@@ -59,7 +59,7 @@ int main(){
 	
 	
 	arr.rotateVertical(PI / 60);
-	arr.velocity = arr.getFront() ;
+	arr.velocity = arr.getFront()*3 ;
 
 
 	MyCamera arrowCam;
@@ -154,14 +154,15 @@ int main(){
 				cam.Update();
 			else
 
-				//This follows the arrow 
-				cam.lookAt(arr.getState(), D_Front * -3 + D_Left * 0.5);
+				//This follows the arrow but with fixed up
+				cam.lookAt(arr.getState(), D_Front * -3 + D_Left * 0.5,D_Up);
 		}
 		mouse.limitInScreen();
 		if (!gamePaused) {
 			if (!justCollided) {
 				arr.translateByVel();
 				arr.rotateToVel();
+				arr.spin();
 				//arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.01;
 			}
 			//This is collision detection part 
