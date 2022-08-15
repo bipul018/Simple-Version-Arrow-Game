@@ -44,7 +44,7 @@ public:
 
 		window.SetSize(size);
 
-		window.SetFullscreen(false);
+		window.SetFullscreen(true);
 
 		shootCam = MyCamera(originalPos, originalTar, Vec3(0.0f, 1.0f, 0.0f));
 		shootCam.SetMode(CAMERA_CUSTOM);
@@ -57,60 +57,79 @@ public:
 		shootCam.SetMouse(&mouse);
 		shootCam.isLikeFirstPerson = true;
 
-		currCam = &shootCam;
+		currCam = &refCam;
 
 		arr.velocity = arr.getFront() * 6;
 
 		mouse.hideCursor().disableCursor();
 		window.SetTargetFPS(120);
 
+		for (auto& x : gameFlags) {
+			x = false;
+		}
+		gameFlags.at(GAME_START) = true;
+		
 
 	}
 
 	void run() {
 
 		while (!window.ShouldClose()) {
+			if (gameFlags.at(GAME_PAUSED))
+				drawPauseScreen();
+			else if (gameFlags.at(GAME_START))
+				drawGameStart();
+			else if (gameFlags.at(GAME_OVER))
+				drawGameOver();
+			else
+				drawGameScreen();
 			runLoop();
 		}
 	}
 
 	void runLoop() {
+		//Event handling stuff
 
-
-		//For full screen 
 		
-		if (arrowReleased && collided) {
-			if (justCollided) {
-				justCollided = false;
-
-				collTimeElapsed = window.GetTime();
+		//Do stuff if game is not playable
+		if (gameFlags.at(GAME_PAUSED) || gameFlags.at(GAME_START) || gameFlags.at(GAME_OVER)) {
+			if (IsKeyPressed(KEY_SPACE)) {
+				gameFlags.at(GAME_PAUSED) = false;
+				gameFlags.at(GAME_START) = false;
+				gameFlags.at(GAME_OVER) = false;
 			}
 		}
-		if (!arrowReleased && IsKeyReleased(KEY_ENTER)) {
-			currCam = &arrCam;
-			arrowReleased = !arrowReleased;
-		}
-		if (window.GetTime() - 3 > collTimeElapsed) {
-			//Remember to seed these random values generators
-			double delf = GetRandomValue(-3, 7);
-			double dels = GetRandomValue(-5, 5);
-			target.translateBy(D_Front * delf + D_Left * dels);
-			arr.reset();
-			collided = false;
-			currCam = &shootCam;
-			arrowReleased = !arrowReleased;
-		}
-		if (!gamePaused) {
-			shootCam.Update();
 
-			//This follows the arrow but with fixed up
-			
-			//arrCam.lookAt(arr.getState(), refCam.getLookDir()*-1, D_Up);
-			arrCam.lookAt(arr.getState(), D_Front * -3 + D_Left * 0.5, D_Up);
+		//Do stuff if game if playable
+		else {
+
+			//Do stuff if target mode
+			if (!gameFlags.at(ARROW_RELEASED)) {
+				if (IsKeyPressed(KEY_ENTER)) {
+					gameFlags.at(ARROW_STRETCHED) = true;
+				}
+				else if (IsKeyReleased(KEY_ENTER)) {
+					gameFlags.at(ARROW_STRETCHED) = false;
+				}
+			}
+
+			//Some future stuff to do when arrow just collides
+			if (gameFlags.at(ARROW_COLLIDE)) {
+				gameFlags.at(ARROW_COLLIDE) = false;
+			}
+
 		}
+
+		//Camera stuff
+		shootCam.Update();
+
+		//This follows the arrow but with fixed up
+		arrCam.lookAt(arr.getState(), D_Front * -3 + D_Left * 0.5, D_Up);
+
+		//Limit mouse inside screen
 		mouse.limitInScreen();
 
-		if (!gameFlags.at(GAME_PAUSED) || !gameFlags.at(GAME_START) || !gameFlags.at(GAME_OVER)) {
+		if (!gameFlags.at(GAME_PAUSED) && !gameFlags.at(GAME_START) && !gameFlags.at(GAME_OVER)) {
 			if (gameFlags.at(ARROW_RELEASED)) {
 				//Move the arrow code if released and not already on wall
 				if (!gameFlags.at(ARROW_ON_WALL)) {
@@ -147,10 +166,20 @@ public:
 						//Reset the arrow and move the wall 
 						gameFlags.at(ARROW_RELEASED) = false;
 						gameFlags.at(ARROW_ON_WALL) = false;
-						
+
+						arr.reset();
+
+						//Remember to seed these random values generators
+						double delf = GetRandomValue(-3, 7);
+						double dels = GetRandomValue(-5, 5);
+
+						target.translateBy(D_Front * delf + D_Left * dels);
+
+						currCam = &refCam;
+
 					}
 				}
-				
+
 			}
 			else {
 
@@ -166,7 +195,7 @@ public:
 				}
 				if (!gameFlags.at(ARROW_STRETCHED) && arrStretchTime != 0) {
 					//Stop and release arrow
-					
+
 					//This is for getting optimum release some time after pressing
 					//Being a sum of ln and exp functions , change in velocity per time button pressed is 
 					//higher at beginning and later 
@@ -180,53 +209,26 @@ public:
 					arr.velocity = arr.getFront().Normalize() * speedfactor * oneMeter;
 
 					gameFlags.at(ARROW_RELEASED) = true;
-					
+					currCam = &arrCam;
+					arrStretchTime = 0;
 				}
 
 			}
 		}
 		else {
 			//Do stuff acc to game paused or over or start
-
+			if (gameFlags.at(GAME_OVER))
+				score = 0;
 		}
 
-
-		if (!gamePaused) {
-			if (!arrowReleased) {
-				arr.rotateFrontTo(shootCam.getLookDir());
-				arr.velocity = arr.getFront() * arr.velocity.Length();
-
-			}
-			else {
-				if (!collided) {
-					arr.translateByVel();
-					arr.rotateToVel();
-					arr.spin();
-					arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.1;
-				}
-				//This is collision detection part 
-				unsigned targetRing = target.getCollisionRing(arr.getFront(), arr.getHead());
-				if (target.doesCross(arr.getHead())) {
-					if (!collided) {
-						if (targetRing != 0) {
-							justCollided = true;
-							score += 10 * targetRing;
-						}
-						
-					}
-					collided = true;
-				}
-			}
-		}
 
 	}
 private:
 
-	void drawGame() {
+	void drawGameScreen() {
 
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
-		currCam = &refCam;
 		currCam->BeginMode();
 
 		DrawPlane(Vec3(0, 0, 0), Vec2(20, 20), GREEN);
@@ -261,7 +263,8 @@ private:
 		window.EndDrawing();
 
 	};
-	void drawPause() {
+
+	void drawPauseScreen() {
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
 
@@ -269,6 +272,26 @@ private:
 
 		window.EndDrawing();
 	};
+
+	void drawGameOver() {
+		window.BeginDrawing();
+		window.ClearBackground(SKYBLUE);
+
+		DrawText("Game over, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
+
+		window.EndDrawing();
+
+	}
+
+	void drawGameStart() {
+		window.BeginDrawing();
+		window.ClearBackground(SKYBLUE);
+
+		DrawText("Welcome, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
+
+		window.EndDrawing();
+
+	}
 
 	const Vec3 originalPos = D_Front * -5 + D_Up * 6;
 	const Vec3 originalTar = Vec3(originalPos) + D_Front * 3;
