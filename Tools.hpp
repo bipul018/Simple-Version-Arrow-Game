@@ -18,6 +18,8 @@ class MyCamera :public raylib::Camera3D{
 public:
 	using Camera3D::Camera3D;
 
+	MyCamera& operator = (const MyCamera&) = default;
+
 	void setLookDir(Vec3 look);
 
 	Vec3 getLookDir() const;

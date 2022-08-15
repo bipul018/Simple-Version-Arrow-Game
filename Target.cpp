@@ -10,7 +10,9 @@ Target::Target(Vec3 normal, Vec3 center, float radius) :
 	}
 	colors.at(0) = BLACK;
 	colors.at(1) = BLUE;
-	colors.at(2) = YELLOW;
+	colors.at(2) = RED;
+	colors.at(3) = ORANGE;
+	colors.at(4) = WHITE;
 }
 
 void Target::draw() {
@@ -38,4 +40,40 @@ void Target::setupTransform() {
 		temp.scale.z -= stepR;
 		temp.scale.y += stepT;
 	}
+}
+
+GameModel::State Target::getState() const {
+	return currState;
+}
+
+Vec3 Target::getNormal() const {
+	return currState.up;
+}
+
+void Target::translateBy(Vec3 delR) {
+	currState.pos += delR;
+}
+
+void Target::reset() {
+	currState = defaultState;
+}
+
+bool Target::doesCross(Vec3 head) const {
+	return head.DotProduct(currState.up) <= Vec3(currState.pos).DotProduct(currState.up);
+}
+
+Vec3 Target::getProj(Vec3 vector,Vec3 point) const {
+	double r = Vec3(currState.up).DotProduct(point * -1 + currState.pos) / vector.DotProduct(currState.up);
+	return vector * r + point;
+}
+
+unsigned Target::getCollisionRing(Vec3 vector, Vec3 point) const {
+	double distance = getProj(vector, point).Distance(currState.pos);
+	int k = distance * models.size() / currState.scale.x;
+	if (distance == 0)
+		return models.size()+1;
+	else if (k >= models.size())
+		return 0;
+	return models.size() - k;
+
 }

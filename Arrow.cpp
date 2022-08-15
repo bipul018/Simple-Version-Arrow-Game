@@ -22,6 +22,13 @@ void Arrow::rotateHorizontal(float angle) {
 	currState.front = currState.front.RotateByQuaternion(Vec4::FromAxisAngle(currState.up, angle));
 }
 
+void Arrow::rotateFrontTo(Vec3 front) {
+	front = front.Normalize();
+	Vec4 rotator = Vec4::FromVector3ToVector3(currState.front, front);
+	currState.up = currState.up.RotateByQuaternion(rotator);
+	currState.front = front;
+}
+
 void Arrow::setupTransform(){
 
 	State temp = currState;
@@ -35,7 +42,7 @@ void Arrow::setupTransform(){
 	arrowHead.get_this_model().transform = state_transition(arrowHead.get_model_state(), temp);
 }
 
-void Arrow::resetArrow() {
+void Arrow::reset() {
 	currState = defaultState;
 }
 

@@ -4,16 +4,18 @@
 class Arrow : public GameModel {
 public:
 	Arrow(Vec3 pos = Vec3(D_Up * 3), Vec3 front = Vec3(::D_Front), Vec3 up = Vec3(::D_Up),float len= 2);
-	
+
+	void setupTransform();
+
+	void reset();
+
 	void spin(float angle = PI / 180);
 
 	void rotateVertical(float angle = PI / 180);
 
 	void rotateHorizontal(float angle = PI / 180);
 
-	void setupTransform();
-
-	void resetArrow();
+	void rotateFrontTo(Vec3 front);
 
 	void translateBy(Vec3 delR);
 

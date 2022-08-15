@@ -39,8 +39,10 @@ public:
 	};
 
 	static raylib::Matrix state_transition(State from, State to);
-
-
+	virtual void draw() = 0;
+	virtual void setupTransform() = 0;
+	virtual State getState() const = 0;
+	virtual void reset() = 0;
 private:
 
 
