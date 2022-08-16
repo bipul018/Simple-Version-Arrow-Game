@@ -1,6 +1,7 @@
 ﻿//C++ Standard Library Includes
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 //Custom Include Files
 #include "Tools.hpp"
@@ -252,8 +253,10 @@ public:
 		}
 		else {
 			//Do stuff acc to game paused or over or start
-			if (gameFlags.at(GAME_OVER))
+			if (gameFlags.at(GAME_OVER)) {
 				score = 0;
+				windSpeed = 0;
+			}
 			if (IsKeyDown(KEY_BACKSPACE))
 				gameFlags.at(GAME_QUIT) = true;
 		}
@@ -298,11 +301,7 @@ private:
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
 
-		bool k = GuiButton(raylib::Rectangle(10, 10, 300, 50), "Game is paused.");
-		if (k)
-			gameFlags.at(GAME_PAUSED) = false;
-
-		//DrawText("Game Paused, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
+		DrawText("Game Paused, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
 
 		window.EndDrawing();
 	};
@@ -322,8 +321,7 @@ private:
 		window.ClearBackground(SKYBLUE);
 
 		DrawText("Welcome, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
-		char data[100] = "rame chor";
-		GuiTextBox(raylib::Rectangle(40, 40, 300, 50), data, 50,false);
+		
 		window.EndDrawing();
 
 	}
@@ -375,9 +373,20 @@ private:
 
 int main(){
 
-	Instance ins;
-	ins.run();
-
+	try {
+		Instance ins;
+		ins.run();
+	}
+	catch (const char* str) {
+		std::fstream out("logfile", std::ios::out);
+		out << str;
+		out.close();
+	}
+	catch (raylib::RaylibException err) {
+		std::fstream out("logfile", std::ios::out);
+		out << err.what();
+		out.close();
+	}
 
 
 	return 0;

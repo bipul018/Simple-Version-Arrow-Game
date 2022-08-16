@@ -1,4 +1,3 @@
-#define RAYGUI_IMPLEMENTATION
 #include "Tools.hpp"
 
 void MyCamera::setLookDir(Vec3 look) {
@@ -114,4 +113,118 @@ MyMouse& MyMouse::enableCursor() {
 	EnableCursor();
 	SetPosition(pos);
 	return *this;
+}
+
+BoxBase::BoxBase(Vec2 position, Vec2 size) {
+	setPosition(position);
+	setSize(size);
+}
+
+void BoxBase::setSize(Vec2 size) {
+	m_size = size;
+	if (size.x < 0) {
+		m_pos.x -= size.x;
+		size.x *= -1;
+	}
+	if (size.y < 0) {
+		m_pos.y -= size.y;
+		size.y *= -1;
+	}
+}
+
+void BoxBase::setPosition(Vec2 pos) {
+	m_pos = pos;
+}
+
+Vec2 BoxBase::getSize() const {
+	return m_size;
+}
+
+Vec2 BoxBase::getPosition() const {
+	return m_pos;
+}
+
+BoxBase& BoxBase::setDynamicPos(BoxBase& parent, double xfac, double yfac) {
+	Vec2 size = getSize();
+	Vec2 pos = parent.getPosition() + parent.getSize() * Vec2(xfac, yfac) - size * 0.5;
+	if (pos.y > (parent.getPosition().y + parent.getSize().y))
+		pos.y = parent.getPosition().y + parent.getSize().y - size.y;
+	if (pos.x > (parent.getPosition().x + parent.getSize().x))
+		pos.x = parent.getPosition().x + parent.getSize().x - size.x;
+
+	if (pos.x < parent.getPosition().x)
+		pos.x = parent.getPosition().x;
+	if (pos.y < parent.getPosition().y)
+		pos.y = parent.getPosition().y;
+
+	setPosition(pos);
+	setSize(size);
+
+	return *this;
+}
+
+BoxBase& BoxBase::setDynamicSize(BoxBase& parent, double xfac, double yfac) {
+
+
+
+	return *this;
+}
+
+void BoxDiv::draw() const {
+	if (m_border > 0) {
+		raylib::Rectangle r(getPosition(), getSize());
+		r.DrawLines(m_Col, m_border);
+	}
+	for (BoxBase* ptr : childs)
+		ptr->draw();
+	
+}
+
+BoxDiv& BoxDiv::packByContent() {
+	if (childs.empty())
+		return *this;
+
+	Vec2 pos = childs.at(0)->getPosition();
+	Vec2 size = Vec2(0, 0);
+	for (BoxBase* ptr : childs) {
+		Vec2 temp = ptr->getPosition();
+		if (temp.x < pos.x)
+			pos.x = temp.x;
+		if (temp.y < pos.y)
+			pos.y = temp.y;
+	}
+	
+	for (BoxBase* ptr : childs) {
+		Vec2 temp = ptr->getPosition() + ptr->getSize() - pos;
+		if (temp.x > size.x)
+			size.x = temp.x;
+		if (temp.y > size.y)
+			size.y = temp.y;
+	}
+	
+	setPosition(pos);
+	setSize(size);
+
+	return *this;
+}
+
+BoxDiv& BoxDiv::packChildren()  {
+	for (BoxBase* ptr : childs)
+		ptr->packByContent();
+	return *this;
+}
+
+Vec2 TextBox::getSize() const {
+	
+}
+
+Vec2 TextBox::getPosition() const {
+	return Vec2();
+}
+
+TextBox& TextBox::packByContent() {
+	// // O: insert return statement here
+}
+
+void TextBox::draw() const {
 }
