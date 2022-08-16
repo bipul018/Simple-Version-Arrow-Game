@@ -1,5 +1,6 @@
 #pragma once
 #include "Bases.hpp"
+#include "extras/raygui.h"
 
 class MyMouse :public raylib::Mouse {
 
@@ -9,6 +10,7 @@ public:
 	MyMouse& limitInScreen();
 	MyMouse& hideCursor();
 	MyMouse& showCursor();
+	bool isCursorHidden();
 	MyMouse& disableCursor();
 	MyMouse& enableCursor();
 private:

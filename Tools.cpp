@@ -1,3 +1,4 @@
+#define RAYGUI_IMPLEMENTATION
 #include "Tools.hpp"
 
 void MyCamera::setLookDir(Vec3 look) {
@@ -12,7 +13,6 @@ Vec3 MyCamera::getLookDir() const {
 }
 
 MyCamera& MyCamera::Update() {
-
 	return changeAngles(getDelAngle());
 }
 
@@ -85,21 +85,33 @@ MyMouse& MyMouse::limitInScreen() {
 
 
 MyMouse& MyMouse::hideCursor() {
+	Vec2 pos = GetPosition();
 	HideCursor();
+	SetPosition(pos);
 	return *this;
 }
 
 MyMouse& MyMouse::showCursor() {
+	Vec2 pos = GetPosition();
 	ShowCursor();
+	SetPosition(pos);
 	return *this;
 }
 
+bool MyMouse::isCursorHidden() {
+	return IsCursorHidden();
+}
+
 MyMouse& MyMouse::disableCursor() {
+	Vec2 pos = GetPosition();
 	DisableCursor();
+	SetPosition(pos);
 	return *this;
 }
 
 MyMouse& MyMouse::enableCursor() {
+	Vec2 pos = GetPosition();
 	EnableCursor();
+	SetPosition(pos);
 	return *this;
 }

@@ -33,8 +33,8 @@ std::ostream& operator<<(std::ostream& os, const Vec2& m) {
 class Instance {
 public:
 
-	Instance():arr(Vec3(originalTar) - D_Left * 0.25, D_Front, D_Up, 1.5),
-		target(D_Front * -1, Vec3(originalTar) - D_Left * 0.25 + D_Front * 12, 3),
+	Instance():arr(D_Front * -2 - D_Left * 0.35+D_Up*5.85, D_Front, D_Up, 1.5),
+		target(D_Front * -1, D_Front * 10 + D_Up * 6  - D_Left * 0.25 , 3),
 		window(screenWidth, screenHeight, "BOO NOOB") {
 
 		Vec2 size(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
@@ -46,13 +46,12 @@ public:
 
 		window.SetFullscreen(true);
 
-		shootCam = MyCamera(originalPos, originalTar, Vec3(0.0f, 1.0f, 0.0f));
+		shootCam = MyCamera(D_Up * 6 + D_Front * -2, D_Up * 6 + D_Front , Vec3(0.0f, 1.0f, 0.0f));
 		shootCam.SetMode(CAMERA_CUSTOM);
 		shootCam.SetProjection(CAMERA_PERSPECTIVE);
 		shootCam.SetFovy(60.0f);
-		shootCam.lookAt(arr.getState(), D_Front * -3 + D_Left * 0.5);
-		arrCam = shootCam;
 		refCam = shootCam;
+		arrCam = shootCam;
 
 		shootCam.SetMouse(&mouse);
 		shootCam.isLikeFirstPerson = true;
@@ -69,12 +68,13 @@ public:
 		}
 		gameFlags.at(GAME_START) = true;
 		
+		windTimer = window.GetTime();
 
 	}
 
 	void run() {
 
-		while (!window.ShouldClose()) {
+		while (!gameFlags.at(GAME_QUIT)) {
 			if (gameFlags.at(GAME_PAUSED))
 				drawPauseScreen();
 			else if (gameFlags.at(GAME_START))
@@ -83,32 +83,47 @@ public:
 				drawGameOver();
 			else
 				drawGameScreen();
+
+			eventHandle();
 			runLoop();
 		}
 	}
+	void eventHandle() {
 
-	void runLoop() {
 		//Event handling stuff
 
-		
+
 		//Do stuff if game is not playable
 		if (gameFlags.at(GAME_PAUSED) || gameFlags.at(GAME_START) || gameFlags.at(GAME_OVER)) {
-			if (IsKeyPressed(KEY_SPACE)) {
+			if (IsKeyReleased(KEY_ESCAPE)) {
 				gameFlags.at(GAME_PAUSED) = false;
 				gameFlags.at(GAME_START) = false;
 				gameFlags.at(GAME_OVER) = false;
+			}
+			if (mouse.isCursorHidden()) {
+				mouse.showCursor().enableCursor();
 			}
 		}
 
 		//Do stuff if game if playable
 		else {
 
+			if (!mouse.isCursorHidden()) {
+				mouse.hideCursor().disableCursor();
+			}
+
+			//Pause if required
+			if (IsKeyReleased(KEY_ESCAPE)) {
+				gameFlags.at(GAME_PAUSED) = true;
+				return;
+			}
+
 			//Do stuff if target mode
 			if (!gameFlags.at(ARROW_RELEASED)) {
-				if (IsKeyPressed(KEY_ENTER)) {
+				if (IsKeyPressed(KEY_ENTER)||mouse.IsButtonPressed(MOUSE_BUTTON_LEFT)) {
 					gameFlags.at(ARROW_STRETCHED) = true;
 				}
-				else if (IsKeyReleased(KEY_ENTER)) {
+				else if (IsKeyReleased(KEY_ENTER) || mouse.IsButtonReleased(MOUSE_BUTTON_LEFT)) {
 					gameFlags.at(ARROW_STRETCHED) = false;
 				}
 			}
@@ -119,6 +134,8 @@ public:
 			}
 
 		}
+	}
+	void runLoop() {
 
 		//Camera stuff
 		shootCam.Update();
@@ -130,19 +147,24 @@ public:
 		mouse.limitInScreen();
 
 		if (!gameFlags.at(GAME_PAUSED) && !gameFlags.at(GAME_START) && !gameFlags.at(GAME_OVER)) {
+
+
 			if (gameFlags.at(ARROW_RELEASED)) {
 				//Move the arrow code if released and not already on wall
 				if (!gameFlags.at(ARROW_ON_WALL)) {
 					arr.translateByVel();
 					arr.spin();
+					//Gravity effect
 					arr.velocity -= D_Up * gravityV * GetFrameTime() * 0.1;
-
+					//Wind effect
+					arr.velocity -= D_Left * windSpeed * GetFrameTime() ;
+				
 					//Draw arrow rotated to place
 					arr.rotateToVel();
 
 					//Check if collides to wall and change flags if does
 					unsigned targetRing = target.getCollisionRing(arr.getFront(), arr.getHead());
-					if (target.doesCross(arr.getHead())) {
+					if ((arr.getHead().DotProduct(D_Up)<0) || target.doesCross(arr.getHead())) {
 						if (targetRing != 0) {
 							score += 5 * targetRing;
 						}
@@ -183,6 +205,13 @@ public:
 			}
 			else {
 
+				//Wind code
+				if (window.GetTime() - windTimer > 1.5) {
+					int sign = (windSpeed >= 0) ? 1 : -1;
+					windSpeed += sign * GetRandomValue(-500, 1000) / 1000.0;
+					windSpeed *= (GetRandomValue(-3, 20) >= 0) ? 1 : -1;
+					windTimer = window.GetTime();
+				}
 				//Arrow targeting code
 
 				arr.rotateFrontTo(shootCam.getLookDir());
@@ -219,6 +248,8 @@ public:
 			//Do stuff acc to game paused or over or start
 			if (gameFlags.at(GAME_OVER))
 				score = 0;
+			if (IsKeyDown(KEY_BACKSPACE))
+				gameFlags.at(GAME_QUIT) = true;
 		}
 
 
@@ -253,10 +284,7 @@ private:
 
 		std::stringstream ss;
 
-		ss << "FPS : " << GetFPS() << std::endl
-			<< "My Camera Angles : " << currCam->currAngles * 180 / PI << std::endl;
-		if (collided)
-			ss << "It Just Collided at : " << arr.getHead() << std::endl;
+		ss << "Wind : " << windSpeed;
 		ss << "\n\t\t Score " << score << std::endl;
 		DrawText(ss.str().c_str(), 10, 10, 10, MAROON);
 
@@ -268,7 +296,11 @@ private:
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
 
-		DrawText("Game Paused, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
+		bool k = GuiButton(raylib::Rectangle(10, 10, 300, 50), "Game is paused.");
+		if (k)
+			gameFlags.at(GAME_PAUSED) = false;
+
+		//DrawText("Game Paused, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
 
 		window.EndDrawing();
 	};
@@ -288,13 +320,14 @@ private:
 		window.ClearBackground(SKYBLUE);
 
 		DrawText("Welcome, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
-
+		char data[100] = "rame chor";
+		GuiTextBox(raylib::Rectangle(40, 40, 300, 50), data, 50,false);
 		window.EndDrawing();
 
 	}
 
-	const Vec3 originalPos = D_Front * -5 + D_Up * 6;
-	const Vec3 originalTar = Vec3(originalPos) + D_Front * 3;
+	//const Vec3 originalPos = D_Front * -5 + D_Up * 6;
+	//const Vec3 originalTar = Vec3(originalPos) + D_Front * 3;
 
 	raylib::Window window;
 	MyCamera shootCam;
@@ -309,7 +342,8 @@ private:
 
 	double arrStretchTime = 0;
 	
-
+	double windSpeed = 0;
+	double windTimer = 0;
 
 	enum Flags {
 		FLAG_EMPTY = -1,
@@ -320,6 +354,7 @@ private:
 		GAME_PAUSED ,			//For when the game is paused
 		GAME_OVER , 			//For when user missed the target and now game is reset
 		GAME_START ,			//For when game is in starting condition
+		GAME_QUIT,				//For quitting the game
 		FLAG_FULL 
 	};
 	std::array<bool, FLAG_FULL> gameFlags;
