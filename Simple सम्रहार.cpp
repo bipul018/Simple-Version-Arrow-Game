@@ -33,10 +33,10 @@ std::ostream& operator<<(std::ostream& os, const Vec2& m) {
 class Instance {
 public:
 
-	Instance():arr(D_Front * -2 - D_Left * 0.35+D_Up*5.85, D_Front, D_Up, 1.5),
+	Instance():arr(D_Front * -1 - D_Left * 0.35+D_Up*5.85, D_Front, D_Up, 1.5),
 		target(D_Front * -1, D_Front * 10 + D_Up * 6  - D_Left * 0.25 , 3),
 		window(screenWidth, screenHeight, "BOO NOOB") {
-
+		bowModel = std::move(ModelGen(ModelGen::BOW));
 		Vec2 size(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
 		
 		screenWidth = size.x;
@@ -205,6 +205,12 @@ public:
 			}
 			else {
 
+				//Bow setup code
+				GameModel::State temp = arr.getState();
+				temp.up = temp.up.RotateByQuaternion(Vec4::FromAxisAngle(temp.front, PI / 4));
+				bowModel.get_this_model().transform = GameModel::state_transition(bowModel.get_model_state(), temp);
+
+
 				//Wind code
 				if (window.GetTime() - windTimer > 1.5) {
 					int sign = (windSpeed >= 0) ? 1 : -1;
@@ -264,17 +270,13 @@ private:
 
 		DrawPlane(Vec3(0, 0, 0), Vec2(20, 20), GREEN);
 
-		//Vertical plane at front
-
-		//DrawTriangle3D(D_Front * 10 + D_Left * 10,
-		//	D_Front * 10 - D_Left * 10,
-		//	D_Front * 10 - D_Left * 10 + D_Up * 10,GREEN);
-		//DrawTriangle3D(D_Front * 10 + D_Left * 10,
-		//	D_Front * 10 - D_Left * 10 + D_Up * 10,
-		//	D_Front * 10 + D_Left * 10 + D_Up * 10,GREEN);
-		//
+		
 		arr.draw();
 		target.draw();
+		
+		bowModel.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, arr.mCol);
+
+
 		currCam->EndMode();
 
 		Vec2 circle = currCam->GetWorldToScreen(target.getProj(arr.getFront(), arr.getHead()));
@@ -336,6 +338,7 @@ private:
 	MyCamera* currCam;
 	MyMouse mouse;
 	Arrow arr;
+	ModelGen bowModel;
 
 	double collTimeElapsed = 0;
 	const double CoolDown = 3;

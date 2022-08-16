@@ -40,6 +40,7 @@ void Arrow::setupTransform(){
 	temp.scale = currState.scale - D_Length * (1 - 0.035) * currState.scale.DotProduct(D_Length);
 	temp.pos = currState.pos + currState.front * (0.5 - 0.035) * currState.scale.DotProduct(D_Length);
 	arrowHead.get_this_model().transform = state_transition(arrowHead.get_model_state(), temp);
+
 }
 
 void Arrow::reset() {
@@ -95,5 +96,5 @@ GameModel::State Arrow::getState() const {
 void Arrow::draw(){
 	setupTransform();
 	arrowBody.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
-	arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, YELLOW);
+	arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
 }

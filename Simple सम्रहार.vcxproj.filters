@@ -51,4 +51,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="model_bow.fbx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="model_bow.iqm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="model.iqm">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
