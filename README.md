@@ -1,7 +1,8 @@
 # Simple-Version-Arrow-Game
-This is cpp project 3d 😁 arrow shooting game , will definitively not be good in the end
+This is cpp project 3d 😁 arrow shooting game , has been an absolute shitshow till now
 
-To run this , [ Warning , these steps have been performed from visual studio in windows, so if no windows 😁 , install windows first ]
+To run this , [ Warning , these steps have been performed from visual studio in windows, so if no windows 😁 , figure out the steps yourself ]
+              [ Overall what we've done is added raylib and raylib-cpp folder in solution folder, compiled libraries and linked them          ]
 1> include raylib folder from raylib git
 { git clone -b "4.0.0" --depth 1 https://github.com/raysan5/raylib.git } in the solution folder :
 
