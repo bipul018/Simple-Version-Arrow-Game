@@ -119,7 +119,8 @@ public:
 	GETTERSETTER(raylib::Color, BackColor, m_Back);
 	std::vector<BoxBase*> childs;
 	bool autoPackChild = true;
-	bool autoResizeWidth = true;
+	bool autoResizeDim = true;
+	bool autoVertical = true;
 private:
 	//To not draw overall border , set border to 0
 	float m_border = 1;

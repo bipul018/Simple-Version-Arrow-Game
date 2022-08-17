@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <map>
 
 //Custom Include Files
 #include "Tools.hpp"
@@ -82,19 +83,30 @@ public:
 		mouse.hideCursor().disableCursor();
 		window.SetTargetFPS(120);
 
+		scores.clear();
+
 		//Image and resources load
 		startImg.Load("final_start.png");
 		startImgTex.Load(startImg);
 
-
-
+		arr.reset();
+		target.reset();
 
 		for (auto& x : gameFlags) {
 			x = false;
 		}
 		gameFlags.at(GAME_START) = true;
-		
+
 		windTimer = window.GetTime();
+
+
+		resetUI();
+
+
+	}
+	
+	void resetUI() {
+
 
 		//Initializing all the gui pages
 		BoxDiv windiv = getWindowDiv();
@@ -103,6 +115,9 @@ public:
 		startPage.SetPadding(4 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
 		pausePage = startPage;
 		settingsPage = startPage;
+		scorePage = startPage;
+		outPage = startPage;
+
 		TextBox txt;
 		txt.SetText("Enter string here");
 		txt.SetFontSize(30 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
@@ -110,14 +125,16 @@ public:
 		txt.SetBorder(5 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
 		txt.SetPadding(9 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
 
-		std::function<void(BoxBase&,Flags)> setbind = [this](BoxBase& box, Flags flag) {
+		std::function<void(BoxBase&, Flags)> setbind = [this](BoxBase& box, Flags flag) {
 			setFlag(flag);
 		};
-		
-		std::function<void(BoxBase&,Flags)> unsetbind = [this](BoxBase& box, Flags flag) {
+
+		std::function<void(BoxBase&, Flags)> unsetbind = [this](BoxBase& box, Flags flag) {
 			unsetFlag(flag);
 		};
 
+
+		//Start Page stuff
 		{
 			TextBox tmp(txt);
 			tmp.SetText("Enter Your Name");
@@ -137,21 +154,25 @@ public:
 			dynamic_cast<BoxDiv&>(base).SetBackColor(BLANK);
 		};
 
+		//Text box for entering name, save pointer for further purposes
 		{
 			TextEdit tmp(txt);
 			tmp.SetText("");
 			guiObjs.push_back(new TextEdit(tmp));
 			startPage.childs.push_back(guiObjs.back());
+			nameBox = dynamic_cast<TextEdit*>(guiObjs.back());
 		}
-		
+
+
+		//Pause screen stuff
 		{
 			TextBox tmp(txt);
-			tmp.SetText("RESUME");
+			tmp.SetText("PLAY");
 			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_PAUSED);
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
-		
+
 		{
 			TextBox tmp(txt);
 			tmp.SetText("HIGH SCORES");
@@ -159,7 +180,7 @@ public:
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
-		
+
 		{
 			TextBox tmp(txt);
 			tmp.SetText("SETTINGS");
@@ -167,7 +188,7 @@ public:
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
-		
+
 		{
 			TextBox tmp(txt);
 			tmp.SetText("EXIT");
@@ -175,7 +196,8 @@ public:
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
-		
+
+		//Settings page stuff
 		{
 			TextBox tmp(txt);
 			tmp.SetText("BACK");
@@ -183,28 +205,109 @@ public:
 			guiObjs.push_back(new TextBox(tmp));
 			settingsPage.childs.push_back(guiObjs.back());
 		}
+		
+		
+		//Scores page Stuff
+		//Score box, save for later too , being dynamic
+		{
+			TextBox tmp(txt);
+			tmp.SetText("Score : 0");
+			tmp.SetBorder(0);
+			guiObjs.push_back(new TextBox(tmp));
+			scorePage.childs.push_back(guiObjs.back());
+			scoreBox = dynamic_cast<TextBox*>(guiObjs.back());
+		}
+		{
+			BoxDiv tempdiv1(scorePage);
+			BoxDiv tempdiv2(scorePage);
 
+			for (std::pair<const float,std::string>& x : scores) {
+
+				TextBox tmp1(txt);
+				tmp1.SetText(x.second);
+				guiObjs.push_back(new TextBox(tmp1));
+				tempdiv1.childs.push_back(guiObjs.back());
+				
+				TextBox tmp2(txt);
+				tmp2.SetText(std::to_string(x.first));
+				guiObjs.push_back(new TextBox(tmp2));
+				tempdiv2.childs.push_back(guiObjs.back());
+
+			}
+			BoxDiv newDiv(scorePage);
+			newDiv.SetBorder((5 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor())));
+			newDiv.autoVertical = false;
+			
+			guiObjs.push_back(new BoxDiv(tempdiv1));
+			newDiv.childs.push_back(guiObjs.back());
+			guiObjs.push_back(new BoxDiv(tempdiv2));
+			newDiv.childs.push_back(guiObjs.back());
+
+			guiObjs.push_back(new BoxDiv(newDiv));
+			scorePage.childs.push_back(guiObjs.back());
+		} 
+		{
+			TextBox tmp(txt);
+			tmp.SetText("BACK");
+			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_SCORES);
+			guiObjs.push_back(new TextBox(tmp));
+			scorePage.childs.push_back(guiObjs.back());
+		}
+		
+		//Quit page Stuff
+		//Use same score box as above
+		{
+			outPage.childs.push_back(scoreBox);
+		}
+
+		{
+			TextBox tmp(txt);
+			tmp.SetText("RESTART");
+			tmp.onClickRelease = [this](BoxBase&) {
+				unsetFlag(GAME_OVER);
+				setFlag(GAME_START);
+			};
+			guiObjs.push_back(new TextBox(tmp));
+			outPage.childs.push_back(guiObjs.back());
+		}
+
+		{
+			TextBox tmp(txt);
+			tmp.SetText("QUIT");
+			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_QUIT);
+			guiObjs.push_back(new TextBox(tmp));
+			outPage.childs.push_back(guiObjs.back());
+		}
+		//Sizing start page
 		windiv.childs.push_back(&startPage);
 		windiv.packByContent();
 		windiv.setMouse(&mouse);
 		windiv.childs.pop_back();
-		
+
+		//Sizing pause page
 		windiv.childs.push_back(&pausePage);
 		windiv.packByContent();
 		windiv.setMouse(&mouse);
 		windiv.childs.pop_back();
-		
+
+		//Sizing settings page
 		windiv.childs.push_back(&settingsPage);
 		windiv.packByContent();
 		windiv.setMouse(&mouse);
 		windiv.childs.pop_back();
 
-		
+		//Sizing scores page
+		windiv.childs.push_back(&scorePage);
+		windiv.packByContent();
+		windiv.setMouse(&mouse);
+		windiv.childs.pop_back();
 
 
-	}
-	
-	void restart() {
+		//Sizing quit page
+		windiv.childs.push_back(&outPage);
+		windiv.packByContent();
+		windiv.setMouse(&mouse);
+		windiv.childs.pop_back();
 
 	}
 
@@ -231,24 +334,27 @@ public:
 
 		//Do stuff if game is not playable
 		if (gameFlags.at(GAME_PAUSED) || gameFlags.at(GAME_START) || gameFlags.at(GAME_OVER)) {
-			if (IsKeyReleased(KEY_ESCAPE)) {
-				gameFlags.at(GAME_PAUSED) = false;
-				gameFlags.at(GAME_START) = false;
-				gameFlags.at(GAME_OVER) = false;
-			}
+			
 			if (mouse.isCursorHidden()) {
 				mouse.showCursor().enableCursor();
 			}
-			if (gameFlags.at(GAME_START))
+			if (gameFlags.at(GAME_START)) {
 				startPage.callActions();
+				if (IsKeyReleased(KEY_ENTER)) {
+					gameFlags.at(GAME_START) = false;
+					gameFlags.at(GAME_PAUSED) = true;
+				}
+			}
 			else if (gameFlags.at(GAME_PAUSED)) {
 				if (gameFlags.at(GAME_SETTINGS))
 					settingsPage.callActions();
+				else if (gameFlags.at(GAME_SCORES))
+					scorePage.callActions();
 				else
 					pausePage.callActions();
 			}
 			else if (gameFlags.at(GAME_OVER))
-				settingsPage.callActions();
+				outPage.callActions();
 
 		}
 
@@ -400,8 +506,18 @@ public:
 		else {
 			//Do stuff acc to game paused or over or start
 			if (gameFlags.at(GAME_OVER)) {
-				score = 0;
-				windSpeed = 0;
+				scores.insert(std::pair<float, std::string>(score, nameBox->GetText()));
+				scoreBox->SetText(std::string("Score : ") + std::to_string(score));
+				scoreBox->packByContent();
+			}
+			else if (gameFlags.at(GAME_START)) {
+				if (!nameBox->GetText().empty() || score != 0 || windSpeed != 0) {
+					score = 0;
+					windSpeed = 0;
+					arr.reset();
+					target.reset();
+					resetUI();
+				}
 			}
 			if (IsKeyDown(KEY_BACK))
 				gameFlags.at(GAME_QUIT) = true;
@@ -424,6 +540,8 @@ private:
 
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
+
+		startImgTex.Draw(Vec2(0, 0));
 		currCam->BeginMode();
 
 		DrawPlane(Vec3(0, 0, 0), Vec2(20, 20), GREEN);
@@ -459,6 +577,8 @@ private:
 		if (gameFlags.at(GAME_PAUSED)) {
 			if (gameFlags.at(GAME_SETTINGS))
 				settingsPage.draw();
+			else if (gameFlags.at(GAME_QUIT))
+				outPage.draw();
 			else
 				pausePage.draw();
 		}
@@ -470,7 +590,7 @@ private:
 		window.BeginDrawing();
 		window.ClearBackground();
 		startImgTex.Draw(Vec2(0, 0));
-		settingsPage.draw();
+		outPage.draw();
 
 		window.EndDrawing();
 
@@ -531,7 +651,14 @@ private:
 	raylib::Texture2D startImgTex;
 
 	//Divisions for each pages to be displayed
-	BoxDiv startPage, pausePage, settingsPage;
+	BoxDiv startPage, pausePage, settingsPage, scorePage, outPage;
+
+	//Pointer of text field for name
+	TextEdit* nameBox;
+	TextBox* scoreBox;
+
+	//Map of scores and names
+	std::map<float, std::string> scores;
 
 	//Vector of gui objects pointer dynamically created
 	std::vector<BoxBase*> guiObjs;
