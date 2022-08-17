@@ -89,24 +89,30 @@ public:
 		/*
 			Load Image Clips	
 		*/
-		std::string clip = "clip/clip";
+		/*std::string clip = "clip/clip";
 		std::string oneZero = "0";
 		std::string twoZero = "00";
 		std::string png = ".png";
 		for (int i = 0; i <= 208; i++) {
-			if ((int)log(i) == 0 || i == 0) {
+			if (i<10 && i>= 0) {
 				std::string newS = clip + twoZero + std::to_string(i) + png;
-				vec.push_back(LoadImage(newS.c_str()));
+				introimgs.push_back(LoadImage(newS.c_str()));
 			}
-			else if ((int)log(i) == 1) {
+			else if (i<100&&i>=10) {
 				std::string newS = clip + oneZero + std::to_string(i) + png;
-				vec.push_back(LoadImage(newS.c_str()));
+				introimgs.push_back(LoadImage(newS.c_str()));
 			}
 			else {
 				std::string newS = clip + std::to_string(i) + png;
-				vec.push_back(LoadImage(newS.c_str()));
+				introimgs.push_back(LoadImage(newS.c_str()));
 			}
 		}
+
+		for (Image& img : introimgs) {
+			Texture2D tex = LoadTextureFromImage(img);
+			introtex.push_back(tex);
+		}*/
+
 
 		for (auto& x : gameFlags) {
 			x = false;
@@ -428,6 +434,10 @@ public:
 	~Instance() {
 		for (BoxBase* ptr : guiObjs)
 			delete ptr;
+		for (Image& img : introimgs)
+			UnloadImage(img);
+		for (Texture2D& tex : introtex)
+			UnloadTexture(tex);
 	}
 private:
 
@@ -491,13 +501,50 @@ private:
 		window.BeginDrawing();
 		window.ClearBackground();
 	
-		if (frameCount <= 208) {
-			DrawTexture(LoadTextureFromImage(vec[frameCount++]), 0, 0, RAYWHITE);
-		}
-		else {
+
+		//Loads while playing 
+		if (frameCount > 208) {
 			startImgTex.Draw(Vec2(0, 0));
 			startPage.draw();
 		}
+		else {
+			std::string clip = "clip/clip";
+			std::string oneZero = "0";
+			std::string twoZero = "00";
+			std::string png = ".png";
+			std::string newS = "";
+			if (frameCount < 10 && frameCount >= 0) {
+				newS = clip + twoZero + std::to_string(frameCount) + png;
+			}
+			else if (frameCount < 100 && frameCount >= 10) {
+				newS = clip + oneZero + std::to_string(frameCount) + png;
+			}
+			else {
+				newS = clip + std::to_string(frameCount) + png;
+			}
+			introimgs.push_back(LoadImage(newS.c_str()));
+			//introtex.push_back(LoadTextureFromImage(introimgs.back()));
+			static Texture2D* tex = nullptr;
+			if (tex != nullptr)
+				UnloadTexture(*tex);
+			if (tex == nullptr)
+				tex = new Texture2D;
+			*tex = LoadTextureFromImage(introimgs.back());
+
+			DrawTexture(*tex, 0, 0, WHITE);
+			frameCount++;
+		}
+
+
+		/*if (frameCount <= 208) {
+			DrawTexture(introtex.at(frameCount++), 0, 0, WHITE);
+		}*/
+		//else {
+			//startImgTex.Draw(Vec2(0, 0));
+		//DrawTexture(introtex.at(2), 0, 0, WHITE);
+		
+		//}
+		DrawFPS(10, 10);
 		
 		window.EndDrawing();
 
@@ -569,7 +616,8 @@ private:
 
 	Target target;
 
-	std::vector<Image> vec;
+	std::vector<Image> introimgs;
+	std::vector<Texture2D> introtex;
 	
 	/******/
 	int frameCount = 0;

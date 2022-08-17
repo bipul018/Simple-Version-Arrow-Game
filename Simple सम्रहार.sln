@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ResourceTools", "ResourceTools.vcxproj", "{63B4D0D3-9F24-4674-A678-36DE8CD1E75B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -27,6 +29,14 @@ Global
 		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Release|x64.Build.0 = Release|x64
 		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Release|x86.ActiveCfg = Release|Win32
 		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Release|x86.Build.0 = Release|Win32
+		{63B4D0D3-9F24-4674-A678-36DE8CD1E75B}.Debug|x64.ActiveCfg = Debug|x64
+		{63B4D0D3-9F24-4674-A678-36DE8CD1E75B}.Debug|x64.Build.0 = Debug|x64
+		{63B4D0D3-9F24-4674-A678-36DE8CD1E75B}.Debug|x86.ActiveCfg = Debug|Win32
+		{63B4D0D3-9F24-4674-A678-36DE8CD1E75B}.Debug|x86.Build.0 = Debug|Win32
+		{63B4D0D3-9F24-4674-A678-36DE8CD1E75B}.Release|x64.ActiveCfg = Release|x64
+		{63B4D0D3-9F24-4674-A678-36DE8CD1E75B}.Release|x64.Build.0 = Release|x64
+		{63B4D0D3-9F24-4674-A678-36DE8CD1E75B}.Release|x86.ActiveCfg = Release|Win32
+		{63B4D0D3-9F24-4674-A678-36DE8CD1E75B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
