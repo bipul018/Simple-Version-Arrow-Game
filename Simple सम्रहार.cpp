@@ -50,12 +50,13 @@ public:
 		GAME_QUIT,				//For quitting the game
 		GAME_SETTINGS,			//When settings page is displayed
 		GAME_SCORES,			//When scores page is to be displayed
+		GAME_RESET,				//Made to know if to reset the game 
 		FLAG_FULL
 	};
 
 	Instance():arr(D_Front * -1 - D_Left * 0.35+D_Up*5.85, D_Front, D_Up, 1.5),
 		target(D_Front * -1, D_Front * 10 + D_Up * 6  - D_Left * 0.25 , 3),
-		window(screenWidth, screenHeight, "BOO NOOB") {
+		window(screenWidth, screenHeight, "BOO NOOB"),scores(std::function<bool(float,float)>(GreaterThan())) {
 		bowModel = std::move(ModelGen(ModelGen::BOW));
 		Vec2 size(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
 		
@@ -96,7 +97,7 @@ public:
 			x = false;
 		}
 		gameFlags.at(GAME_START) = true;
-
+		gameFlags.at(GAME_RESET) = true;
 		windTimer = window.GetTime();
 
 
@@ -266,6 +267,7 @@ public:
 			tmp.onClickRelease = [this](BoxBase&) {
 				unsetFlag(GAME_OVER);
 				setFlag(GAME_START);
+				setFlag(GAME_RESET);
 			};
 			guiObjs.push_back(new TextBox(tmp));
 			outPage.childs.push_back(guiObjs.back());
@@ -278,6 +280,9 @@ public:
 			guiObjs.push_back(new TextBox(tmp));
 			outPage.childs.push_back(guiObjs.back());
 		}
+
+		outPage.autoVertical = false;
+
 		//Sizing start page
 		windiv.childs.push_back(&startPage);
 		windiv.packByContent();
@@ -423,6 +428,7 @@ public:
 						}
 						else {
 							gameFlags.at(GAME_OVER) = true;
+							gameFlags.at(GAME_RESET) = true;
 						}
 						gameFlags.at(ARROW_ON_WALL) = true;
 						gameFlags.at(ARROW_COLLIDE) = true;
@@ -511,12 +517,13 @@ public:
 				scoreBox->packByContent();
 			}
 			else if (gameFlags.at(GAME_START)) {
-				if (!nameBox->GetText().empty() || score != 0 || windSpeed != 0) {
+				if (gameFlags.at(GAME_RESET)) {
 					score = 0;
 					windSpeed = 0;
 					arr.reset();
 					target.reset();
 					resetUI();
+					gameFlags.at(GAME_RESET) = false;
 				}
 			}
 			if (IsKeyDown(KEY_BACK))
@@ -544,8 +551,6 @@ private:
 		startImgTex.Draw(Vec2(0, 0));
 		currCam->BeginMode();
 
-		DrawPlane(Vec3(0, 0, 0), Vec2(20, 20), GREEN);
-
 		
 		arr.draw();
 		target.draw();
@@ -554,12 +559,12 @@ private:
 
 
 		currCam->EndMode();
-
-		Vec2 circle = currCam->GetWorldToScreen(target.getProj(arr.getFront(), arr.getHead()));
-		DrawCircleLines(circle.x, circle.y, 10, RED);
-		DrawLine(circle.x - 5, circle.y, circle.x + 5, circle.y, RED);
-		DrawLine(circle.x, circle.y - 5, circle.x, circle.y + 5, RED);
-
+		if (!gameFlags.at(ARROW_RELEASED)) {
+			Vec2 circle = currCam->GetWorldToScreen(target.getProj(arr.getFront(), arr.getHead()));
+			DrawCircleLines(circle.x, circle.y, 10, RED);
+			DrawLine(circle.x - 5, circle.y, circle.x + 5, circle.y, RED);
+			DrawLine(circle.x, circle.y - 5, circle.x, circle.y + 5, RED);
+		}
 		std::stringstream ss;
 
 		ss << "Wind : " << windSpeed;
@@ -579,6 +584,12 @@ private:
 				settingsPage.draw();
 			else if (gameFlags.at(GAME_QUIT))
 				outPage.draw();
+			else if (gameFlags.at(GAME_SCORES)) {
+				BoxDiv glob = getWindowDiv();
+				glob.childs.push_back(&scorePage);
+				glob.packChildren();
+				scorePage.draw();
+			}
 			else
 				pausePage.draw();
 		}
@@ -590,6 +601,9 @@ private:
 		window.BeginDrawing();
 		window.ClearBackground();
 		startImgTex.Draw(Vec2(0, 0));
+		BoxDiv glob = getWindowDiv();
+		glob.childs.push_back(&outPage);
+		glob.packChildren();
 		outPage.draw();
 
 		window.EndDrawing();
@@ -657,8 +671,14 @@ private:
 	TextEdit* nameBox;
 	TextBox* scoreBox;
 
-	//Map of scores and names
-	std::map<float, std::string> scores;
+	//Map of scores and names plus a helful greater than comparator
+	class GreaterThan {
+	public:
+		bool operator()(float a, float b) const {
+			return b < a;
+		}
+	};
+	std::map<float, std::string, std::function<bool(float, float)>> scores;
 
 	//Vector of gui objects pointer dynamically created
 	std::vector<BoxBase*> guiObjs;
@@ -682,6 +702,7 @@ private:
 
 	Target target;
 
+	
 };
 
 
