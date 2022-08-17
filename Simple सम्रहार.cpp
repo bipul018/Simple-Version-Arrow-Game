@@ -51,6 +51,8 @@ public:
 		GAME_SETTINGS,			//When settings page is displayed
 		GAME_SCORES,			//When scores page is to be displayed
 		GAME_RESET,				//Made to know if to reset the game 
+		GAME_RESIZE,			//Indicates that game has just been resized
+		FULL_SCREEN,			//Indicates that game is fullscreen
 		FLAG_FULL
 	};
 
@@ -90,6 +92,14 @@ public:
 		startImg.Load("final_start.png");
 		startImgTex.Load(startImg);
 
+		pauseImg.Load("final_pause.png");
+		pauseImgTex.Load(pauseImg);
+		
+		gameImg.Load("final_game.png");
+		gameImgTex.Load(gameImg);
+
+
+
 		arr.reset();
 		target.reset();
 
@@ -98,6 +108,8 @@ public:
 		}
 		gameFlags.at(GAME_START) = true;
 		gameFlags.at(GAME_RESET) = true;
+		gameFlags.at(GAME_RESIZE) = true;
+		gameFlags.at(FULL_SCREEN) = true;
 		windTimer = window.GetTime();
 
 
@@ -107,9 +119,32 @@ public:
 	}
 	
 	void resetUI() {
+		if (gameFlags.at(GAME_RESIZE)) {
 
+			Vec2 size = window.GetSize();
 
+			if (gameFlags.at(FULL_SCREEN))
+				size = Vec2(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
+
+			//Resizing the images and thier textures
+			startImg.Resize(size.x, size.y);
+			pauseImg.Resize(size.x, size.y);
+			gameImg.Resize(size.x, size.y);
+
+			startImgTex.Unload();
+			pauseImgTex.Unload();
+			gameImgTex.Unload();
+
+			startImgTex.Load(startImg);
+			pauseImgTex.Load(pauseImg);
+			gameImgTex.Load(gameImg);
+			gameFlags.at(GAME_RESIZE) = false;
+		}
 		//Initializing all the gui pages
+		for (BoxBase* box : guiObjs)
+			delete box;
+		guiObjs.clear();
+
 		BoxDiv windiv = getWindowDiv();
 		startPage = windiv;
 		startPage.SetBorder(0);
@@ -199,6 +234,65 @@ public:
 		}
 
 		//Settings page stuff
+		{
+			BoxDiv contain(settingsPage);
+
+			{
+				TextBox tmp(txt);
+				tmp.SetText("WINDOW SIZE : ");
+				tmp.SetBorder(0);
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			
+			{
+				TextBox tmp(txt);
+				tmp.SetText("FULL SCREEN");
+				tmp.onClickRelease = [this](BoxBase&) {
+					gameFlags.at(FULL_SCREEN) = true;
+					gameFlags.at(GAME_RESIZE) = true;
+					screenHeight = GetMonitorHeight(GetCurrentMonitor());
+					screenWidth= GetMonitorWidth(GetCurrentMonitor());
+					window.SetSize(screenWidth, screenHeight);
+					window.SetFullscreen(true);
+				};
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			std::function<void(BoxBase&, int, int)> setsize = [this](BoxBase&, int w, int h) {
+				gameFlags.at(FULL_SCREEN) = false;
+				gameFlags.at(GAME_RESIZE) = true;
+				screenHeight = h;
+				screenWidth = w;
+				window.SetFullscreen(false);
+				window.SetSize(w, h);
+			};
+			{
+				TextBox tmp(txt);
+				tmp.SetText("1280x1024");
+				tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 1280, 1024);
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			{
+				TextBox tmp(txt);
+				tmp.SetText("1280x720");
+				tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 1280, 720);
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			{
+				TextBox tmp(txt);
+				tmp.SetText("800x600");
+				tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 800, 600);
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			contain.autoVertical = false;
+			guiObjs.push_back(new BoxDiv(contain));
+			settingsPage.childs.push_back(guiObjs.back());
+		}
+
 		{
 			TextBox tmp(txt);
 			tmp.SetText("BACK");
@@ -335,7 +429,8 @@ public:
 	void eventHandle() {
 
 		//Event handling stuff
-
+		if (gameFlags.at(GAME_RESIZE))
+			resetUI();
 
 		//Do stuff if game is not playable
 		if (gameFlags.at(GAME_PAUSED) || gameFlags.at(GAME_START) || gameFlags.at(GAME_OVER)) {
@@ -548,7 +643,7 @@ private:
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
 
-		startImgTex.Draw(Vec2(0, 0));
+		gameImgTex.Draw(Vec2(0, 0));
 		currCam->BeginMode();
 
 		
@@ -578,7 +673,7 @@ private:
 	void drawPauseScreen() {
 		window.BeginDrawing();
 		window.ClearBackground();
-		startImgTex.Draw(Vec2(0, 0));
+		pauseImgTex.Draw(Vec2(0, 0));
 		if (gameFlags.at(GAME_PAUSED)) {
 			if (gameFlags.at(GAME_SETTINGS))
 				settingsPage.draw();
@@ -600,7 +695,7 @@ private:
 	void drawGameOver() {
 		window.BeginDrawing();
 		window.ClearBackground();
-		startImgTex.Draw(Vec2(0, 0));
+		pauseImgTex.Draw(Vec2(0, 0));
 		BoxDiv glob = getWindowDiv();
 		glob.childs.push_back(&outPage);
 		glob.packChildren();
@@ -661,8 +756,17 @@ private:
 	Arrow arr;
 	ModelGen bowModel;
 
+	//Resources load from files
 	raylib::Image startImg;
 	raylib::Texture2D startImgTex;
+	
+	raylib::Image pauseImg;
+	raylib::Texture2D pauseImgTex;
+	
+	raylib::Image gameImg;
+	raylib::Texture2D gameImgTex;
+
+
 
 	//Divisions for each pages to be displayed
 	BoxDiv startPage, pausePage, settingsPage, scorePage, outPage;

@@ -374,6 +374,9 @@
     <Image Include="clip\clip206.png" />
     <Image Include="clip\clip207.png" />
     <Image Include="clip\clip208.png" />
+    <Image Include="final_game.jpg" />
+    <Image Include="final_game.png" />
+    <Image Include="final_pause.png" />
     <Image Include="final_start.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

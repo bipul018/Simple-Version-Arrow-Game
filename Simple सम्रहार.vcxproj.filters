@@ -699,5 +699,14 @@
     <Image Include="clip\clip208.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="final_game.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_pause.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_game.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
