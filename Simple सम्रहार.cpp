@@ -48,6 +48,7 @@ public:
 		GAME_START,			//For when game is in starting condition
 		GAME_QUIT,				//For quitting the game
 		GAME_SETTINGS,			//When settings page is displayed
+		GAME_SCORES,			//When scores page is to be displayed
 		FLAG_FULL
 	};
 
@@ -86,32 +87,6 @@ public:
 		startImgTex.Load(startImg);
 
 
-		/*
-			Load Image Clips	
-		*/
-		/*std::string clip = "clip/clip";
-		std::string oneZero = "0";
-		std::string twoZero = "00";
-		std::string png = ".png";
-		for (int i = 0; i <= 208; i++) {
-			if (i<10 && i>= 0) {
-				std::string newS = clip + twoZero + std::to_string(i) + png;
-				introimgs.push_back(LoadImage(newS.c_str()));
-			}
-			else if (i<100&&i>=10) {
-				std::string newS = clip + oneZero + std::to_string(i) + png;
-				introimgs.push_back(LoadImage(newS.c_str()));
-			}
-			else {
-				std::string newS = clip + std::to_string(i) + png;
-				introimgs.push_back(LoadImage(newS.c_str()));
-			}
-		}
-
-		for (Image& img : introimgs) {
-			Texture2D tex = LoadTextureFromImage(img);
-			introtex.push_back(tex);
-		}*/
 
 
 		for (auto& x : gameFlags) {
@@ -173,6 +148,14 @@ public:
 			TextBox tmp(txt);
 			tmp.SetText("RESUME");
 			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_PAUSED);
+			guiObjs.push_back(new TextBox(tmp));
+			pausePage.childs.push_back(guiObjs.back());
+		}
+		
+		{
+			TextBox tmp(txt);
+			tmp.SetText("HIGH SCORES");
+			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_SCORES);
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -434,10 +417,6 @@ public:
 	~Instance() {
 		for (BoxBase* ptr : guiObjs)
 			delete ptr;
-		for (Image& img : introimgs)
-			UnloadImage(img);
-		for (Texture2D& tex : introtex)
-			UnloadTexture(tex);
 	}
 private:
 
@@ -500,52 +479,12 @@ private:
 	void drawGameStart() {
 		window.BeginDrawing();
 		window.ClearBackground();
-	
-
-		//Loads while playing 
-		if (frameCount > 208) {
-			startImgTex.Draw(Vec2(0, 0));
-			startPage.draw();
-		}
-		else {
-			std::string clip = "clip/clip";
-			std::string oneZero = "0";
-			std::string twoZero = "00";
-			std::string png = ".png";
-			std::string newS = "";
-			if (frameCount < 10 && frameCount >= 0) {
-				newS = clip + twoZero + std::to_string(frameCount) + png;
-			}
-			else if (frameCount < 100 && frameCount >= 10) {
-				newS = clip + oneZero + std::to_string(frameCount) + png;
-			}
-			else {
-				newS = clip + std::to_string(frameCount) + png;
-			}
-			introimgs.push_back(LoadImage(newS.c_str()));
-			//introtex.push_back(LoadTextureFromImage(introimgs.back()));
-			static Texture2D* tex = nullptr;
-			if (tex != nullptr)
-				UnloadTexture(*tex);
-			if (tex == nullptr)
-				tex = new Texture2D;
-			*tex = LoadTextureFromImage(introimgs.back());
-
-			DrawTexture(*tex, 0, 0, WHITE);
-			frameCount++;
-		}
 
 
-		/*if (frameCount <= 208) {
-			DrawTexture(introtex.at(frameCount++), 0, 0, WHITE);
-		}*/
-		//else {
-			//startImgTex.Draw(Vec2(0, 0));
-		//DrawTexture(introtex.at(2), 0, 0, WHITE);
-		
-		//}
-		DrawFPS(10, 10);
-		
+		startImgTex.Draw(Vec2(0, 0));
+		startPage.draw();
+
+
 		window.EndDrawing();
 
 	}
@@ -616,11 +555,6 @@ private:
 
 	Target target;
 
-	std::vector<Image> introimgs;
-	std::vector<Texture2D> introtex;
-	
-	/******/
-	int frameCount = 0;
 };
 
 
