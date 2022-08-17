@@ -316,3 +316,26 @@ void TextBox::draw() {
 	setPosition(getPosition() - Vec2(GetBorder() + GetPadding(), GetBorder() + GetPadding()));
 
 }
+
+TextEdit::TextEdit(const TextBox& t):TextBox(t) {
+}
+
+void TextEdit::callActions() {
+	TextBox::callActions();
+	if (IsKeyReleased(KEY_BACKSPACE) && !GetText().empty()) {
+		std::string str = GetText();
+		str.pop_back();
+		SetText(str);
+	}
+	else
+		for (int i = KEY_A; i <= KEY_Z; ++i) {
+			if (IsKeyReleased(i)) {
+				std::string str = GetText();
+				str = str + static_cast<char>(i);
+				if (MeasureTextEx(GetFont(), str.c_str(), GetFontSize(), GetSpacing()).x < (getSize().x-GetPadding()*2-GetBorder()*2))
+					SetText(str);
+				break;
+			}
+		}
+
+}

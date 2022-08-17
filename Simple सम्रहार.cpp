@@ -157,9 +157,9 @@ public:
 		};
 
 		{
-			TextBox tmp(txt);
-			tmp.SetText("_         ");
-			guiObjs.push_back(new TextBox(tmp));
+			TextEdit tmp(txt);
+			tmp.SetText("");
+			guiObjs.push_back(new TextEdit(tmp));
 			startPage.childs.push_back(guiObjs.back());
 		}
 		
@@ -414,7 +414,7 @@ public:
 				score = 0;
 				windSpeed = 0;
 			}
-			if (IsKeyDown(KEY_BACKSPACE))
+			if (IsKeyDown(KEY_BACK))
 				gameFlags.at(GAME_QUIT) = true;
 		}
 
