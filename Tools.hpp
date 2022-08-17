@@ -154,6 +154,7 @@ private:
 class TextBox :  public MyText,  public BoxDiv {
 public:
 	using BoxDiv::BoxDiv;
+	
 	BoxBase& packByContent();
 	TextBox& packChlidren();
 	void draw();
@@ -163,4 +164,14 @@ private:
 
 };
 
+class TextEdit : public TextBox {
+public:
+	using TextBox::TextBox;
+	TextEdit(const TextBox&);
+	void callActions();
 
+
+
+private:
+
+};
