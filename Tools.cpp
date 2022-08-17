@@ -144,6 +144,10 @@ Vec2 BoxBase::getPosition() const {
 	return m_pos;
 }
 
+void BoxBase::setMouse(MyMouse *mouse) {
+	mptr = mouse;
+}
+
 BoxBase& BoxBase::setDynamicPos(BoxBase& parent, double xfac, double yfac) {
 	Vec2 size = getSize();
 	Vec2 pos = parent.getPosition() + parent.getSize() * Vec2(xfac, yfac) - size * 0.5;
@@ -170,9 +174,32 @@ BoxBase& BoxBase::setDynamicSize(BoxBase& parent, double xfac, double yfac) {
 	return *this;
 }
 
-void BoxDiv::draw() const {
+void BoxBase::callActions() {
+	if (mptr == nullptr)
+		return;
+
+	bool isMouseOver = (mptr->GetX() > m_pos.x && mptr->GetY() > m_pos.y) &&
+		(mptr->GetX() < (m_pos.x + m_size.x) && mptr->GetY() < (m_pos.y + m_size.y));
+	if (isMouseOver) {
+
+		if (mptr->IsButtonPressed(MOUSE_LEFT_BUTTON))
+			onClickDown(*this);
+		else if (mptr->IsButtonReleased(MOUSE_LEFT_BUTTON))
+			onClickRelease(*this);
+		else if (mptr->IsButtonDown(MOUSE_LEFT_BUTTON))
+			onClickDown(*this);
+		else
+			onHover(*this);
+	}
+	else
+		onNothing(*this);
+
+}
+
+void BoxDiv::draw()  {
 	if (m_border > 0) {
 		raylib::Rectangle r(getPosition(), getSize());
+		r.Draw(m_Back);
 		r.DrawLines(m_Col, m_border);
 	}
 	for (BoxBase* ptr : childs)
@@ -183,6 +210,9 @@ void BoxDiv::draw() const {
 BoxDiv& BoxDiv::packByContent() {
 	if (childs.empty())
 		return *this;
+
+	if (autoPackChild)
+		packChildren();
 
 	Vec2 pos = childs.at(0)->getPosition();
 	Vec2 size = Vec2(0, 0);
@@ -201,7 +231,8 @@ BoxDiv& BoxDiv::packByContent() {
 		if (temp.y > size.y)
 			size.y = temp.y;
 	}
-	
+	pos = pos - Vec2(m_padding + m_border, m_padding + m_border);
+	size = size + Vec2(m_padding + m_border, m_padding + m_border)*2;
 	setPosition(pos);
 	setSize(size);
 
@@ -209,22 +240,54 @@ BoxDiv& BoxDiv::packByContent() {
 }
 
 BoxDiv& BoxDiv::packChildren()  {
-	for (BoxBase* ptr : childs)
+	double maxy = 0;
+	for (BoxBase* ptr : childs) {
 		ptr->packByContent();
+		maxy += ptr->getSize().y + m_padding;
+	}
+	float y = BoxDiv(getPosition(), Vec2(0,maxy)).setDynamicPos(*this, 0.5, 0.5).getPosition().y;
+	for (BoxBase* ptr : childs) {
+		ptr->setDynamicPos(*this, 0.5, 0.5);
+		ptr->setPosition(Vec2(ptr->getPosition().x, y));
+		y += ptr->getSize().y + m_padding;
+	}
 	return *this;
 }
 
-Vec2 TextBox::getSize() const {
-	
+void BoxDiv::callActions() {
+	BoxBase::callActions();
+	for (BoxBase* ptr : childs)
+		ptr->callActions();
 }
 
-Vec2 TextBox::getPosition() const {
-	return Vec2();
+void BoxDiv::setMouse(MyMouse* mouse) {
+	mptr = mouse;
+	for (BoxBase* ptr : childs)
+		ptr->setMouse(mouse);
+}
+
+
+void TextBox::SetText(std::string txt) {
+	raylib::Text::SetText(txt);
+}
+
+void TextBox::SetFontSize(float fsize) {
+	raylib::Text::SetFontSize(fsize);
+}
+
+void TextBox::SetSpacing(float space) {
+	raylib::Text::SetSpacing(space);
+}
+
+void TextBox::SetFont(raylib::Font fval) {
+	raylib::Text::SetFont(fval);
 }
 
 TextBox& TextBox::packByContent() {
-	// // O: insert return statement here
+	setSize(MeasureEx());
+	return *this;
 }
 
-void TextBox::draw() const {
+void TextBox::draw()  {
+	Draw(getPosition());
 }

@@ -31,6 +31,8 @@ std::ostream& operator<<(std::ostream& os, const Vec2& m) {
 	return os;
 }
 
+Font console;
+
 class Instance {
 public:
 
@@ -71,8 +73,52 @@ public:
 		
 		windTimer = window.GetTime();
 
-	}
 
+		//Initializing all the gui pages
+		startPage = getWindowDiv();
+		BoxDiv windiv = getWindowDiv();
+		pausePage = startPage;
+		settingsPage = startPage;
+
+		std::function<void(BoxBase&)> altColorBack = [](BoxBase& base) {
+			BoxDiv& div = dynamic_cast<BoxDiv&>(base);
+			if (div.GetBackColor() == raylib::Color(BLANK)) {
+				raylib::Color c(BLUE);
+				c.a = 100;
+				div.SetBackColor(c);
+			}
+			else
+				div.SetBackColor(BLUE);
+		};
+
+		
+
+		guiObjs.push_back(new TextBox);
+		TextBox& txt = dynamic_cast<TextBox&>(*guiObjs.back());
+		txt.SetText("Welcome, Press space to continue");
+		txt.SetFontSize(20);
+		txt.SetSpacing(5);
+		startPage.childs.push_back(&txt);
+		
+		windiv.childs.push_back(&startPage);
+		windiv.packByContent();
+		windiv.setMouse(&mouse);
+		windiv.childs.pop_back();
+		
+		startPage.onHover = [](BoxBase& base) {
+			raylib::Color c(BLUE);
+			c.a = 100;
+			dynamic_cast<BoxDiv&>(base).SetBackColor(c);
+		};
+		
+		startPage.onNothing = [](BoxBase& base) {
+			dynamic_cast<BoxDiv&>(base).SetBackColor(BLANK);
+		};
+		
+
+
+	}
+	
 	void run() {
 
 		while (!gameFlags.at(GAME_QUIT)) {
@@ -104,6 +150,7 @@ public:
 			if (mouse.isCursorHidden()) {
 				mouse.showCursor().enableCursor();
 			}
+			startPage.callActions();
 		}
 
 		//Do stuff if game if playable
@@ -263,6 +310,15 @@ public:
 
 
 	}
+
+	BoxDiv getWindowDiv() const {
+		return BoxDiv(Vec2(0, 0), window.GetSize());
+	}
+
+	~Instance() {
+		for (BoxBase* ptr : guiObjs)
+			delete ptr;
+	}
 private:
 
 	void drawGameScreen() {
@@ -320,7 +376,8 @@ private:
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
 
-		DrawText("Welcome, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
+		startPage.draw();
+		//("Welcome, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
 		
 		window.EndDrawing();
 
@@ -337,6 +394,12 @@ private:
 	MyMouse mouse;
 	Arrow arr;
 	ModelGen bowModel;
+
+	//Divisions for each pages to be displayed
+	BoxDiv startPage, pausePage, settingsPage;
+
+	//Vector of gui objects pointer dynamically created
+	std::vector<BoxBase*> guiObjs;
 
 	double collTimeElapsed = 0;
 	const double CoolDown = 3;
@@ -375,6 +438,7 @@ int main(){
 
 	try {
 		Instance ins;
+		
 		ins.run();
 	}
 	catch (const char* str) {
@@ -388,7 +452,7 @@ int main(){
 		out.close();
 	}
 
-
+	//UnloadFont(console);
 	return 0;
 
 }
