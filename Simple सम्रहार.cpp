@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <vector>
 
 //Custom Include Files
 #include "Tools.hpp"
@@ -83,6 +84,29 @@ public:
 		//Image and resources load
 		startImg.Load("final_start.png");
 		startImgTex.Load(startImg);
+
+
+		/*
+			Load Image Clips	
+		*/
+		std::string clip = "clip/clip";
+		std::string oneZero = "0";
+		std::string twoZero = "00";
+		std::string png = ".png";
+		for (int i = 0; i <= 208; i++) {
+			if ((int)log(i) == 0 || i == 0) {
+				std::string newS = clip + twoZero + std::to_string(i) + png;
+				vec.push_back(LoadImage(newS.c_str()));
+			}
+			else if ((int)log(i) == 1) {
+				std::string newS = clip + oneZero + std::to_string(i) + png;
+				vec.push_back(LoadImage(newS.c_str()));
+			}
+			else {
+				std::string newS = clip + std::to_string(i) + png;
+				vec.push_back(LoadImage(newS.c_str()));
+			}
+		}
 
 		for (auto& x : gameFlags) {
 			x = false;
@@ -466,8 +490,14 @@ private:
 	void drawGameStart() {
 		window.BeginDrawing();
 		window.ClearBackground();
-		startImgTex.Draw(Vec2(0, 0));
-		startPage.draw();
+	
+		if (frameCount <= 208) {
+			DrawTexture(LoadTextureFromImage(vec[frameCount++]), 0, 0, RAYWHITE);
+		}
+		else {
+			startImgTex.Draw(Vec2(0, 0));
+			startPage.draw();
+		}
 		
 		window.EndDrawing();
 
@@ -538,10 +568,16 @@ private:
 	unsigned score = 0;
 
 	Target target;
+
+	std::vector<Image> vec;
+	
+	/******/
+	int frameCount = 0;
 };
 
 
 int main(){
+
 
 	try {
 		Instance ins;
