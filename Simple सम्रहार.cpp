@@ -36,6 +36,20 @@ Font console;
 class Instance {
 public:
 
+	enum Flags {
+		FLAG_EMPTY = -1,
+		ARROW_RELEASED,			//For when arrow is released from bow
+		ARROW_COLLIDE,			//For when arrow has just collided in previous frame
+		ARROW_ON_WALL,			//For when arrow is released but stuck at wall
+		ARROW_STRETCHED,		//For when user is stretching the bow
+		GAME_PAUSED,			//For when the game is paused
+		GAME_OVER, 			//For when user missed the target and now game is reset
+		GAME_START,			//For when game is in starting condition
+		GAME_QUIT,				//For quitting the game
+		GAME_SETTINGS,			//When settings page is displayed
+		FLAG_FULL
+	};
+
 	Instance():arr(D_Front * -1 - D_Left * 0.35+D_Up*5.85, D_Front, D_Up, 1.5),
 		target(D_Front * -1, D_Front * 10 + D_Up * 6  - D_Left * 0.25 , 3),
 		window(screenWidth, screenHeight, "BOO NOOB") {
@@ -66,16 +80,16 @@ public:
 		mouse.hideCursor().disableCursor();
 		window.SetTargetFPS(120);
 
+		//Image and resources load
+		startImg.Load("final_start.png");
+		startImgTex.Load(startImg);
+
 		for (auto& x : gameFlags) {
 			x = false;
 		}
 		gameFlags.at(GAME_START) = true;
 		
 		windTimer = window.GetTime();
-
-		//Image and resources load
-		startImg.Load("final_start.png");
-		startImgTex.Load(startImg);
 
 		//Initializing all the gui pages
 		BoxDiv windiv = getWindowDiv();
@@ -91,6 +105,14 @@ public:
 		txt.SetBorder(5 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
 		txt.SetPadding(9 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
 
+		std::function<void(BoxBase&,Flags)> setbind = [this](BoxBase& box, Flags flag) {
+			setFlag(flag);
+		};
+		
+		std::function<void(BoxBase&,Flags)> unsetbind = [this](BoxBase& box, Flags flag) {
+			unsetFlag(flag);
+		};
+
 		{
 			TextBox tmp(txt);
 			tmp.SetText("Enter Your Name");
@@ -101,7 +123,7 @@ public:
 
 
 		txt.onHover = [](BoxBase& base) {
-			raylib::Color c(BLUE);
+			raylib::Color c(SKYBLUE);
 			c.a = 100;
 			dynamic_cast<BoxDiv&>(base).SetBackColor(c);
 		};
@@ -120,6 +142,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("RESUME");
+			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_PAUSED);
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -127,6 +150,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("SETTINGS");
+			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_SETTINGS);
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -134,6 +158,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("EXIT");
+			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_QUIT);
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -141,6 +166,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("BACK");
+			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_SETTINGS);
 			guiObjs.push_back(new TextBox(tmp));
 			settingsPage.childs.push_back(guiObjs.back());
 		}
@@ -165,6 +191,10 @@ public:
 
 	}
 	
+	void restart() {
+
+	}
+
 	void run() {
 
 		while (!gameFlags.at(GAME_QUIT)) {
@@ -198,8 +228,12 @@ public:
 			}
 			if (gameFlags.at(GAME_START))
 				startPage.callActions();
-			else if (gameFlags.at(GAME_PAUSED))
-				pausePage.callActions();
+			else if (gameFlags.at(GAME_PAUSED)) {
+				if (gameFlags.at(GAME_SETTINGS))
+					settingsPage.callActions();
+				else
+					pausePage.callActions();
+			}
 			else if (gameFlags.at(GAME_OVER))
 				settingsPage.callActions();
 
@@ -407,17 +441,22 @@ private:
 
 	void drawPauseScreen() {
 		window.BeginDrawing();
-		window.ClearBackground(SKYBLUE);
-
-		pausePage.draw();
+		window.ClearBackground();
+		startImgTex.Draw(Vec2(0, 0));
+		if (gameFlags.at(GAME_PAUSED)) {
+			if (gameFlags.at(GAME_SETTINGS))
+				settingsPage.draw();
+			else
+				pausePage.draw();
+		}
 
 		window.EndDrawing();
 	};
 
 	void drawGameOver() {
 		window.BeginDrawing();
-		window.ClearBackground(SKYBLUE);
-
+		window.ClearBackground();
+		startImgTex.Draw(Vec2(0, 0));
 		settingsPage.draw();
 
 		window.EndDrawing();
@@ -427,7 +466,6 @@ private:
 	void drawGameStart() {
 		window.BeginDrawing();
 		window.ClearBackground();
-		//startImg.Draw(startImg, raylib::Rectangle(0, 0, screenWidth, screenHeight), raylib::Rectangle(0, 0, screenWidth, screenHeight));
 		startImgTex.Draw(Vec2(0, 0));
 		startPage.draw();
 		
@@ -437,6 +475,32 @@ private:
 
 	//const Vec3 originalPos = D_Front * -5 + D_Up * 6;
 	//const Vec3 originalTar = Vec3(originalPos) + D_Front * 3;
+
+	void setFlag(Flags flag) {
+		if (flag == FLAG_EMPTY) {
+			for (bool& x : gameFlags)
+				x = false;
+		}
+		else if (flag == FLAG_FULL) {
+			for (bool& x : gameFlags)
+				x = true;
+		}
+		else
+			gameFlags.at(flag) = true;
+	}
+	
+	void unsetFlag(Flags flag) {
+		if (flag == FLAG_EMPTY) {
+			for (bool& x : gameFlags)
+				x = true;
+		}
+		else if (flag == FLAG_FULL) {
+			for (bool& x : gameFlags)
+				x = false;
+		}
+		else
+			gameFlags.at(flag) = false;
+	}
 
 	raylib::Window window;
 	MyCamera shootCam;
@@ -464,18 +528,6 @@ private:
 	double windSpeed = 0;
 	double windTimer = 0;
 
-	enum Flags {
-		FLAG_EMPTY = -1,
-		ARROW_RELEASED,			//For when arrow is released from bow
-		ARROW_COLLIDE ,			//For when arrow has just collided in previous frame
-		ARROW_ON_WALL ,			//For when arrow is released but stuck at wall
-		ARROW_STRETCHED,		//For when user is stretching the bow
-		GAME_PAUSED ,			//For when the game is paused
-		GAME_OVER , 			//For when user missed the target and now game is reset
-		GAME_START ,			//For when game is in starting condition
-		GAME_QUIT,				//For quitting the game
-		FLAG_FULL 
-	};
 	std::array<bool, FLAG_FULL> gameFlags;
 
 	bool collided = false;
