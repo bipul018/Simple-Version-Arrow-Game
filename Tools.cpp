@@ -324,7 +324,7 @@ void TextEdit::callActions() {
 	TextBox::callActions();
 	if (IsKeyReleased(KEY_BACKSPACE) && !GetText().empty()) {
 		std::string str = GetText();
-		str.back() = '\0';
+		str.pop_back();
 		SetText(str);
 	}
 	else
@@ -332,7 +332,8 @@ void TextEdit::callActions() {
 			if (IsKeyReleased(i)) {
 				std::string str = GetText();
 				str = str + static_cast<char>(i);
-				SetText(str);
+				if (MeasureTextEx(GetFont(), str.c_str(), GetFontSize(), GetSpacing()).x < (getSize().x-GetPadding()*2-GetBorder()*2))
+					SetText(str);
 				break;
 			}
 		}
