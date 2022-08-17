@@ -156,9 +156,16 @@
     <ClInclude Include="Tools.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="model.iqm" />
     <None Include="model_bow.fbx" />
     <None Include="model_bow.iqm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="final_intro.mp4" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="final_start.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -73,47 +73,93 @@ public:
 		
 		windTimer = window.GetTime();
 
+		//Image and resources load
+		startImg.Load("final_start.png");
+		startImgTex.Load(startImg);
 
 		//Initializing all the gui pages
-		startPage = getWindowDiv();
 		BoxDiv windiv = getWindowDiv();
+		startPage = windiv;
+		startPage.SetBorder(0);
+		startPage.SetPadding(4 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
 		pausePage = startPage;
 		settingsPage = startPage;
+		TextBox txt;
+		txt.SetText("Enter string here");
+		txt.SetFontSize(30 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
+		txt.SetSpacing(8 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
+		txt.SetBorder(5 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
+		txt.SetPadding(9 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
 
-		std::function<void(BoxBase&)> altColorBack = [](BoxBase& base) {
-			BoxDiv& div = dynamic_cast<BoxDiv&>(base);
-			if (div.GetBackColor() == raylib::Color(BLANK)) {
-				raylib::Color c(BLUE);
-				c.a = 100;
-				div.SetBackColor(c);
-			}
-			else
-				div.SetBackColor(BLUE);
+		{
+			TextBox tmp(txt);
+			tmp.SetText("Enter Your Name");
+			tmp.SetBorder(0);
+			guiObjs.push_back(new TextBox(tmp));
+			startPage.childs.push_back(guiObjs.back());
+		}
+
+
+		txt.onHover = [](BoxBase& base) {
+			raylib::Color c(BLUE);
+			c.a = 100;
+			dynamic_cast<BoxDiv&>(base).SetBackColor(c);
 		};
 
-		
+		txt.onNothing = [](BoxBase& base) {
+			dynamic_cast<BoxDiv&>(base).SetBackColor(BLANK);
+		};
 
-		guiObjs.push_back(new TextBox);
-		TextBox& txt = dynamic_cast<TextBox&>(*guiObjs.back());
-		txt.SetText("Welcome, Press space to continue");
-		txt.SetFontSize(20);
-		txt.SetSpacing(5);
-		startPage.childs.push_back(&txt);
+		{
+			TextBox tmp(txt);
+			tmp.SetText("_         ");
+			guiObjs.push_back(new TextBox(tmp));
+			startPage.childs.push_back(guiObjs.back());
+		}
 		
+		{
+			TextBox tmp(txt);
+			tmp.SetText("RESUME");
+			guiObjs.push_back(new TextBox(tmp));
+			pausePage.childs.push_back(guiObjs.back());
+		}
+		
+		{
+			TextBox tmp(txt);
+			tmp.SetText("SETTINGS");
+			guiObjs.push_back(new TextBox(tmp));
+			pausePage.childs.push_back(guiObjs.back());
+		}
+		
+		{
+			TextBox tmp(txt);
+			tmp.SetText("EXIT");
+			guiObjs.push_back(new TextBox(tmp));
+			pausePage.childs.push_back(guiObjs.back());
+		}
+		
+		{
+			TextBox tmp(txt);
+			tmp.SetText("BACK");
+			guiObjs.push_back(new TextBox(tmp));
+			settingsPage.childs.push_back(guiObjs.back());
+		}
+
 		windiv.childs.push_back(&startPage);
 		windiv.packByContent();
 		windiv.setMouse(&mouse);
 		windiv.childs.pop_back();
 		
-		startPage.onHover = [](BoxBase& base) {
-			raylib::Color c(BLUE);
-			c.a = 100;
-			dynamic_cast<BoxDiv&>(base).SetBackColor(c);
-		};
+		windiv.childs.push_back(&pausePage);
+		windiv.packByContent();
+		windiv.setMouse(&mouse);
+		windiv.childs.pop_back();
 		
-		startPage.onNothing = [](BoxBase& base) {
-			dynamic_cast<BoxDiv&>(base).SetBackColor(BLANK);
-		};
+		windiv.childs.push_back(&settingsPage);
+		windiv.packByContent();
+		windiv.setMouse(&mouse);
+		windiv.childs.pop_back();
+
 		
 
 
@@ -150,7 +196,13 @@ public:
 			if (mouse.isCursorHidden()) {
 				mouse.showCursor().enableCursor();
 			}
-			startPage.callActions();
+			if (gameFlags.at(GAME_START))
+				startPage.callActions();
+			else if (gameFlags.at(GAME_PAUSED))
+				pausePage.callActions();
+			else if (gameFlags.at(GAME_OVER))
+				settingsPage.callActions();
+
 		}
 
 		//Do stuff if game if playable
@@ -357,7 +409,7 @@ private:
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
 
-		DrawText("Game Paused, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
+		pausePage.draw();
 
 		window.EndDrawing();
 	};
@@ -366,7 +418,7 @@ private:
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
 
-		DrawText("Game over, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
+		settingsPage.draw();
 
 		window.EndDrawing();
 
@@ -374,10 +426,10 @@ private:
 
 	void drawGameStart() {
 		window.BeginDrawing();
-		window.ClearBackground(SKYBLUE);
-
+		window.ClearBackground();
+		//startImg.Draw(startImg, raylib::Rectangle(0, 0, screenWidth, screenHeight), raylib::Rectangle(0, 0, screenWidth, screenHeight));
+		startImgTex.Draw(Vec2(0, 0));
 		startPage.draw();
-		//("Welcome, Press space to continue\n", screenWidth / 4, screenHeight / 4, 30, MAROON);
 		
 		window.EndDrawing();
 
@@ -394,6 +446,9 @@ private:
 	MyMouse mouse;
 	Arrow arr;
 	ModelGen bowModel;
+
+	raylib::Image startImg;
+	raylib::Texture2D startImgTex;
 
 	//Divisions for each pages to be displayed
 	BoxDiv startPage, pausePage, settingsPage;

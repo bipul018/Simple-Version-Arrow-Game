@@ -196,18 +196,18 @@ void BoxBase::callActions() {
 
 }
 
-void BoxDiv::draw()  {
+void BoxDiv::draw() {
+	raylib::Rectangle r(getPosition(), getSize());
+	r.Draw(m_Back);
 	if (m_border > 0) {
-		raylib::Rectangle r(getPosition(), getSize());
-		r.Draw(m_Back);
 		r.DrawLines(m_Col, m_border);
 	}
 	for (BoxBase* ptr : childs)
 		ptr->draw();
-	
+
 }
 
-BoxDiv& BoxDiv::packByContent() {
+BoxBase& BoxDiv::packByContent() {
 	if (childs.empty())
 		return *this;
 
@@ -241,23 +241,28 @@ BoxDiv& BoxDiv::packByContent() {
 
 BoxDiv& BoxDiv::packChildren()  {
 	double maxy = 0;
+	double maxx = 0;
 	for (BoxBase* ptr : childs) {
 		ptr->packByContent();
 		maxy += ptr->getSize().y + m_padding;
+		maxx = (ptr->getSize().x > maxx) ? ptr->getSize().x : maxx;
 	}
 	float y = BoxDiv(getPosition(), Vec2(0,maxy)).setDynamicPos(*this, 0.5, 0.5).getPosition().y;
 	for (BoxBase* ptr : childs) {
+		if (autoResizeWidth)
+			ptr->setSize(Vec2(maxx, ptr->getSize().y));
 		ptr->setDynamicPos(*this, 0.5, 0.5);
 		ptr->setPosition(Vec2(ptr->getPosition().x, y));
 		y += ptr->getSize().y + m_padding;
+		
 	}
 	return *this;
 }
 
 void BoxDiv::callActions() {
-	BoxBase::callActions();
 	for (BoxBase* ptr : childs)
 		ptr->callActions();
+	BoxBase::callActions();
 }
 
 void BoxDiv::setMouse(MyMouse* mouse) {
@@ -267,27 +272,47 @@ void BoxDiv::setMouse(MyMouse* mouse) {
 }
 
 
-void TextBox::SetText(std::string txt) {
+void MyText::SetText(std::string txt) {
 	raylib::Text::SetText(txt);
 }
 
-void TextBox::SetFontSize(float fsize) {
+void MyText::SetFontSize(float fsize) {
 	raylib::Text::SetFontSize(fsize);
 }
 
-void TextBox::SetSpacing(float space) {
+void MyText::SetSpacing(float space) {
 	raylib::Text::SetSpacing(space);
 }
 
-void TextBox::SetFont(raylib::Font fval) {
+void MyText::SetFont(raylib::Font fval) {
 	raylib::Text::SetFont(fval);
 }
 
-TextBox& TextBox::packByContent() {
+BoxBase& MyText::packByContent() {
 	setSize(MeasureEx());
 	return *this;
 }
 
-void TextBox::draw()  {
+void MyText::draw()  {
 	Draw(getPosition());
+}
+
+BoxBase& TextBox::packByContent() {
+	MyText::packByContent();
+	setPosition(getPosition() - Vec2(GetBorder() + GetPadding(), GetBorder() + GetPadding()));
+	setSize(getSize() + Vec2(GetBorder() + GetPadding(), GetBorder() + GetPadding()) * 2);
+	return *this;
+}
+
+TextBox& TextBox::packChlidren() {
+	packByContent();
+	return *this;
+}
+
+void TextBox::draw() {
+	BoxDiv::draw();
+	setPosition(getPosition() + Vec2(GetBorder() + GetPadding(), GetBorder() + GetPadding()));
+	MyText::draw();
+	setPosition(getPosition() - Vec2(GetBorder() + GetPadding(), GetBorder() + GetPadding()));
+
 }

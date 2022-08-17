@@ -95,16 +95,17 @@ private:
 
 };
 
-class BoxDiv: public BoxBase {
+class BoxDiv: virtual public BoxBase {
 public:
 	using BoxBase::BoxBase;
 	void draw() ;
 
 	//Packs itself and resizes itself by children
-	BoxDiv& packByContent();
+	BoxBase& packByContent();
+	//virtual BoxDiv& packByContent();
 
 	//Packs child's contents and arrange them properly
-	BoxDiv& packChildren() ;
+	virtual BoxDiv& packChildren() ;
 
 	void callActions();
 
@@ -118,6 +119,7 @@ public:
 	GETTERSETTER(raylib::Color, BackColor, m_Back);
 	std::vector<BoxBase*> childs;
 	bool autoPackChild = true;
+	bool autoResizeWidth = true;
 private:
 	//To not draw overall border , set border to 0
 	float m_border = 1;
@@ -127,7 +129,7 @@ private:
 };
 
 
-class TextBox :public BoxBase, private raylib::Text{
+class MyText :virtual public BoxBase, private raylib::Text{
 public:
 	using BoxBase::BoxBase;
 	using raylib::Text::GetColor;
@@ -142,8 +144,23 @@ public:
 	void SetSpacing(float space);
 	void SetFont(raylib::Font fval);
 
-	TextBox& packByContent();
+	BoxBase& packByContent();
+	//MyText& packByContent();
 	void draw() ;
 private:
 	
 };
+
+class TextBox :  public MyText,  public BoxDiv {
+public:
+	using BoxDiv::BoxDiv;
+	BoxBase& packByContent();
+	TextBox& packChlidren();
+	void draw();
+
+
+private:
+
+};
+
+
