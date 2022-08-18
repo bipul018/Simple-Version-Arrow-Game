@@ -16,6 +16,9 @@
     <Filter Include="Resource Files\game clips">
       <UniqueIdentifier>{680e88e8-0229-489a-ac26-082fcd733b81}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\leaves">
+      <UniqueIdentifier>{53734ca8-148e-4534-b03e-a9944a4c13f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple सम्रहार.cpp">
@@ -27,13 +30,13 @@
     <ClCompile Include="Arrow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Obstacles.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Tools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Target.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsHelp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,6 +53,9 @@
     <ClInclude Include="Tools.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsHelp.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="model_bow.fbx">
@@ -61,10 +67,10 @@
     <None Include="model.iqm">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="ClassDiagram.cd" />
     <None Include="arrowascii.iqm">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="final_intro.mp4">
@@ -710,6 +716,36 @@
     </Image>
     <Image Include="clip\clip208.png">
       <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="leaves\0001.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0002.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0003.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0004.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0005.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0006.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0007.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0008.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0009.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0010.png">
+      <Filter>Resource Files\leaves</Filter>
     </Image>
   </ItemGroup>
 </Project>

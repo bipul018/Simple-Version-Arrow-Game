@@ -1,95 +1,95 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Instance" Collapsed="true">
-    <Position X="7.75" Y="0.5" Width="1.5" />
+    <Position X="7.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAAgAwABBKIAABgAEIAoJMAA6AAoAACcQAAAgAEAAgg=</HashCode>
+      <HashCode>AIAoAwARBIICABwAMCAoJMAI6AAqAgKc0AAQgAFIAgA=</HashCode>
       <FileName>Simple सम्रहार.cpp</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Arrow" Collapsed="true">
-    <Position X="3" Y="1.75" Width="1.5" />
+    <Position X="0.5" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>wgAAAAAFAAAAgIQBAAMEAQAggEAAACAAgAwAAAAAIQA=</HashCode>
       <FileName>Arrow.hpp</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="GameModel" Collapsed="true">
-    <Position X="3" Y="0.5" Width="1.5" />
+    <Position X="1.75" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAEAAAAAAQAAEIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Bases.hpp</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ModelGen" Collapsed="true">
-    <Position X="9.5" Y="0.5" Width="1.5" />
+    <Position X="9.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAEAAASAAAEAAAAAAABABAAhAgAEAAAhAAAIAAA=</HashCode>
       <FileName>Bases.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Obstacle" Collapsed="true">
-    <Position X="0.75" Y="1.75" Width="1.5" />
+  <Class Name="BoxBase" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgAAAAAAAAAAgAQBAAIAAAAAAEAAAAAAAAAAAAAAQAA=</HashCode>
-      <FileName>Obstacles.hpp</FileName>
+      <HashCode>AAAAIAAAkMAACAgAAAIAAAASAIQAAAAACCAAQQIAAQI=</HashCode>
+      <FileName>GraphicsHelp.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BoxDiv" Collapsed="true">
+    <Position X="1.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAARAASAAAAAKAECAEIAQAAAAAQAAAAAAIAAI=</HashCode>
+      <FileName>GraphicsHelp.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MyText" Collapsed="true">
+    <Position X="4" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIIAAACAAAAEAAAAAAAAEAAAAAo=</HashCode>
+      <FileName>GraphicsHelp.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextBox" Collapsed="true">
+    <Position X="5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>GraphicsHelp.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextEdit" Collapsed="true">
+    <Position X="5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GraphicsHelp.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Particles2D" Collapsed="true">
+    <Position X="0.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GraphicsHelp.hpp</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Target" Collapsed="true">
-    <Position X="5.25" Y="1.75" Width="1.5" />
+    <Position X="2.75" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QgAAAAAEBAAAgAQBAAIAAiAAgAAAAACAAIAAAAAIAAA=</HashCode>
       <FileName>Target.hpp</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MyMouse" Collapsed="true">
-    <Position X="9.5" Y="1.5" Width="1.5" />
+    <Position X="9.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAACAABAAAAAAAEAEAAIAAAAAAAEAAAAAAAAAAAAAA=</HashCode>
       <FileName>Tools.hpp</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MyCamera" Collapsed="true">
-    <Position X="7.75" Y="1.5" Width="1.5" />
+    <Position X="7.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAgAAAgAAAAAAAAAABAFAAAAAAAEAQAQgAAAAAAQ=</HashCode>
       <FileName>Tools.hpp</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BoxBase">
-    <Position X="3.25" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAIAAAkMAACAgAAAIAAAASAIQAAAAACCAAQQIAAQI=</HashCode>
-      <FileName>Tools.hpp</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="BoxDiv">
-    <Position X="0.5" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAARAASAAAAAKAAAAEIAQAAAAAQAAAAAAIAAI=</HashCode>
-      <FileName>Tools.hpp</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="MyText">
-    <Position X="7" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIIAAACAAAAEAAAAAAAAAAAAAAo=</HashCode>
-      <FileName>Tools.hpp</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TextBox">
-    <Position X="3.75" Y="9.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
-      <FileName>Tools.hpp</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Enum Name="Flags" Collapsed="true">
-    <Position X="7.75" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AgAAAAAAAAAAAAgCAAAAAAAAAAAAQAQAAAiAAgAUAAA=</HashCode>
-      <FileName>Simple सम्रहार.cpp</FileName>
-    </TypeIdentifier>
-  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
