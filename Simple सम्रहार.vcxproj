@@ -143,7 +143,7 @@
   <ItemGroup>
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="Bases.cpp" />
-    <ClCompile Include="Obstacles.cpp" />
+    <ClCompile Include="GraphicsHelp.cpp" />
     <ClCompile Include="Simple सम्रहार.cpp" />
     <ClCompile Include="Target.cpp" />
     <ClCompile Include="Tools.cpp" />
@@ -151,11 +151,12 @@
   <ItemGroup>
     <ClInclude Include="Arrow.hpp" />
     <ClInclude Include="Bases.hpp" />
-    <ClInclude Include="Obstacles.hpp" />
+    <ClInclude Include="GraphicsHelp.hpp" />
     <ClInclude Include="Target.hpp" />
     <ClInclude Include="Tools.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="arrowascii.iqm" />
     <None Include="ClassDiagram.cd" />
     <None Include="model.iqm" />
     <None Include="model_bow.fbx" />
@@ -378,6 +379,16 @@
     <Image Include="final_game.png" />
     <Image Include="final_pause.png" />
     <Image Include="final_start.png" />
+    <Image Include="leaves\0001.png" />
+    <Image Include="leaves\0002.png" />
+    <Image Include="leaves\0003.png" />
+    <Image Include="leaves\0004.png" />
+    <Image Include="leaves\0005.png" />
+    <Image Include="leaves\0006.png" />
+    <Image Include="leaves\0007.png" />
+    <Image Include="leaves\0008.png" />
+    <Image Include="leaves\0009.png" />
+    <Image Include="leaves\0010.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

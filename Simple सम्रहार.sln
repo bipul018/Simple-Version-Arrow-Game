@@ -13,16 +13,28 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug.DLL|x64 = Debug.DLL|x64
+		Debug.DLL|x86 = Debug.DLL|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release.DLL|x64 = Release.DLL|x64
+		Release.DLL|x86 = Release.DLL|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Debug.DLL|x64.ActiveCfg = Debug|x64
+		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Debug.DLL|x64.Build.0 = Debug|x64
+		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Debug.DLL|x86.ActiveCfg = Debug|Win32
+		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Debug.DLL|x86.Build.0 = Debug|Win32
 		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Debug|x64.ActiveCfg = Debug|x64
 		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Debug|x64.Build.0 = Debug|x64
 		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Debug|x86.ActiveCfg = Debug|Win32
 		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Debug|x86.Build.0 = Debug|Win32
+		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Release.DLL|x64.ActiveCfg = Release|x64
+		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Release.DLL|x64.Build.0 = Release|x64
+		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Release.DLL|x86.ActiveCfg = Release|Win32
+		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Release.DLL|x86.Build.0 = Release|Win32
 		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Release|x64.ActiveCfg = Release|x64
 		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Release|x64.Build.0 = Release|x64
 		{089AA2A0-54FE-4596-B889-BDDB824D511C}.Release|x86.ActiveCfg = Release|Win32

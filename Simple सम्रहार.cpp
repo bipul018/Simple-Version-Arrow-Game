@@ -4,11 +4,11 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <thread>
 
 //Custom Include Files
-#include "Tools.hpp"
+#include "GraphicsHelp.hpp"
 #include "Arrow.hpp"
-#include "Obstacles.hpp"
 #include "Target.hpp"
 
 //Some debugging tools 
@@ -33,8 +33,6 @@ std::ostream& operator<<(std::ostream& os, const Vec2& m) {
 	return os;
 }
 
-Font console;
-
 class Instance {
 public:
 
@@ -45,8 +43,8 @@ public:
 		ARROW_ON_WALL,			//For when arrow is released but stuck at wall
 		ARROW_STRETCHED,		//For when user is stretching the bow
 		GAME_PAUSED,			//For when the game is paused
-		GAME_OVER, 			//For when user missed the target and now game is reset
-		GAME_START,			//For when game is in starting condition
+		GAME_OVER, 				//For when user missed the target and now game is reset
+		GAME_START,				//For when game is in starting condition
 		GAME_QUIT,				//For quitting the game
 		GAME_SETTINGS,			//When settings page is displayed
 		GAME_SCORES,			//When scores page is to be displayed
@@ -66,8 +64,10 @@ public:
 		screenHeight = size.y;
 
 		window.SetSize(size);
-
+		window.SetPosition(30, 40);
 		window.SetFullscreen(true);
+
+		SetExitKey(KEY_NULL);
 
 		shootCam = MyCamera(D_Up * 6 + D_Front * -2, D_Up * 6 + D_Front , Vec3(0.0f, 1.0f, 0.0f));
 		shootCam.SetMode(CAMERA_CUSTOM);
@@ -97,8 +97,17 @@ public:
 		
 		gameImg.Load("final_game.png");
 		gameImgTex.Load(gameImg);
+		
+		InitAudioDevice();
+		startAudio.Load("game_intro1.mp3");
+		gamesAudio.Load("game_music1.mp3");
+		hoverAudio.Load("hoversound.mp3");
+		clickAudio.Load("clicksound.mp3");
+		
+		startAudio.looping = true;
+		gamesAudio.looping = true;
 
-
+		gamesAudio.Seek(7);
 
 		arr.reset();
 		target.reset();
@@ -112,12 +121,12 @@ public:
 		gameFlags.at(FULL_SCREEN) = true;
 		windTimer = window.GetTime();
 
-
 		resetUI();
-
+		//parallelRun = new std::thread([this]() {resetUI(); });
+		//parallelRun->join();
 
 	}
-	
+
 	void resetUI() {
 		if (gameFlags.at(GAME_RESIZE)) {
 
@@ -126,21 +135,23 @@ public:
 			if (gameFlags.at(FULL_SCREEN))
 				size = Vec2(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
 
-			//Resizing the images and thier textures
-			startImg.Resize(size.x, size.y);
-			pauseImg.Resize(size.x, size.y);
-			gameImg.Resize(size.x, size.y);
+			startImgTex.SetHeight(size.y);
+			startImgTex.SetWidth(size.x);
+			
+			pauseImgTex.SetHeight(size.y);
+			pauseImgTex.SetWidth(size.x);
+			
+			gameImgTex.SetHeight(size.y);
+			gameImgTex.SetWidth(size.x);
+			
 
-			startImgTex.Unload();
-			pauseImgTex.Unload();
-			gameImgTex.Unload();
-
-			startImgTex.Load(startImg);
-			pauseImgTex.Load(pauseImg);
-			gameImgTex.Load(gameImg);
 			gameFlags.at(GAME_RESIZE) = false;
 		}
-		//Initializing all the gui pages
+		//Initializing all the gui pages except name box if already initialized to temporary objs
+		if (nameBox != nullptr) {
+			nameBox = new TextEdit(*nameBox);
+		}
+
 		for (BoxBase* box : guiObjs)
 			delete box;
 		guiObjs.clear();
@@ -179,24 +190,43 @@ public:
 			startPage.childs.push_back(guiObjs.back());
 		}
 
+		
+		txt.onHover = [this](BoxBase& base) {
+			BoxDiv& div = dynamic_cast<BoxDiv&>(base);
+			raylib::Color a = div.GetColor();
+			
+			if (!hoverAudio.IsPlaying()) {
+				hoverAudio.Play();
+				hoverAudio.Update();
+			}
 
-		txt.onHover = [](BoxBase& base) {
 			raylib::Color c(SKYBLUE);
 			c.a = 100;
-			dynamic_cast<BoxDiv&>(base).SetBackColor(c);
+			div.SetBackColor(c);
 		};
 
 		txt.onNothing = [](BoxBase& base) {
 			dynamic_cast<BoxDiv&>(base).SetBackColor(BLANK);
 		};
 
+		std::function<void()> playclick = [this]() {
+			clickAudio.Play();
+			clickAudio.Update();
+		};
+
 		//Text box for entering name, save pointer for further purposes
 		{
+
 			TextEdit tmp(txt);
 			tmp.SetText("");
-			guiObjs.push_back(new TextEdit(tmp));
+			if (nameBox == nullptr) {
+				guiObjs.push_back(new TextEdit(tmp));
+				nameBox = dynamic_cast<TextEdit*>(guiObjs.back());
+			}
+			else {
+				guiObjs.push_back(nameBox);
+			}
 			startPage.childs.push_back(guiObjs.back());
-			nameBox = dynamic_cast<TextEdit*>(guiObjs.back());
 		}
 
 
@@ -204,7 +234,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("PLAY");
-			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_PAUSED);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); unsetFlag(GAME_PAUSED); });
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -212,7 +242,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("HIGH SCORES");
-			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_SCORES);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); setFlag(GAME_SCORES); });
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -220,7 +250,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("SETTINGS");
-			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_SETTINGS);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); setFlag(GAME_SETTINGS); });
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -228,7 +258,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("EXIT");
-			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_QUIT);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); setFlag(GAME_QUIT); });
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -239,6 +269,7 @@ public:
 
 			{
 				TextBox tmp(txt);
+				tmp.onHover = [](BoxBase&) {};
 				tmp.SetText("WINDOW SIZE : ");
 				tmp.SetBorder(0);
 				guiObjs.push_back(new TextBox(tmp));
@@ -248,7 +279,8 @@ public:
 			{
 				TextBox tmp(txt);
 				tmp.SetText("FULL SCREEN");
-				tmp.onClickRelease = [this](BoxBase&) {
+				tmp.onClickRelease = [this,playclick](BoxBase&) {
+					playclick();
 					gameFlags.at(FULL_SCREEN) = true;
 					gameFlags.at(GAME_RESIZE) = true;
 					screenHeight = GetMonitorHeight(GetCurrentMonitor());
@@ -259,8 +291,11 @@ public:
 				guiObjs.push_back(new TextBox(tmp));
 				contain.childs.push_back(guiObjs.back());
 			}
-			std::function<void(BoxBase&, int, int)> setsize = [this](BoxBase&, int w, int h) {
+			std::function<void( int, int)> setsize = [this,playclick]( int w, int h) {
+				playclick();
 				gameFlags.at(FULL_SCREEN) = false;
+				if (screenHeight == h && screenWidth == w)
+					return;
 				gameFlags.at(GAME_RESIZE) = true;
 				screenHeight = h;
 				screenWidth = w;
@@ -269,22 +304,29 @@ public:
 			};
 			{
 				TextBox tmp(txt);
-				tmp.SetText("1280x1024");
-				tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 1280, 1024);
+				tmp.SetText("1280x960");
+				tmp.onClickRelease = std::bind(setsize, 1280, 960);
 				guiObjs.push_back(new TextBox(tmp));
 				contain.childs.push_back(guiObjs.back());
 			}
 			{
 				TextBox tmp(txt);
 				tmp.SetText("1280x720");
-				tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 1280, 720);
+				tmp.onClickRelease = std::bind(setsize, 1280, 720);
 				guiObjs.push_back(new TextBox(tmp));
 				contain.childs.push_back(guiObjs.back());
 			}
 			{
 				TextBox tmp(txt);
-				tmp.SetText("800x600");
-				tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 800, 600);
+				tmp.SetText("800x480");
+				tmp.onClickRelease = std::bind(setsize, 800, 480);
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			{
+				TextBox tmp(txt);
+				tmp.SetText("400x200");
+				tmp.onClickRelease = std::bind(setsize, 400, 200);
 				guiObjs.push_back(new TextBox(tmp));
 				contain.childs.push_back(guiObjs.back());
 			}
@@ -296,7 +338,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("BACK");
-			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_SETTINGS);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); unsetFlag(GAME_SETTINGS); });
 			guiObjs.push_back(new TextBox(tmp));
 			settingsPage.childs.push_back(guiObjs.back());
 		}
@@ -306,7 +348,8 @@ public:
 		//Score box, save for later too , being dynamic
 		{
 			TextBox tmp(txt);
-			tmp.SetText("Score : 0");
+			tmp.onHover = [](BoxBase&) {};
+			tmp.SetText("Score : " + std::to_string(score));
 			tmp.SetBorder(0);
 			guiObjs.push_back(new TextBox(tmp));
 			scorePage.childs.push_back(guiObjs.back());
@@ -319,11 +362,13 @@ public:
 			for (std::pair<const float,std::string>& x : scores) {
 
 				TextBox tmp1(txt);
+				tmp1.onHover = [](BoxBase&) {};
 				tmp1.SetText(x.second);
 				guiObjs.push_back(new TextBox(tmp1));
 				tempdiv1.childs.push_back(guiObjs.back());
 				
 				TextBox tmp2(txt);
+				tmp2.onHover = [](BoxBase&) {};
 				tmp2.SetText(std::to_string(x.first));
 				guiObjs.push_back(new TextBox(tmp2));
 				tempdiv2.childs.push_back(guiObjs.back());
@@ -344,7 +389,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("BACK");
-			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_SCORES);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); unsetFlag(GAME_SCORES); });
 			guiObjs.push_back(new TextBox(tmp));
 			scorePage.childs.push_back(guiObjs.back());
 		}
@@ -370,7 +415,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("QUIT");
-			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_QUIT);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); setFlag(GAME_QUIT); });
 			guiObjs.push_back(new TextBox(tmp));
 			outPage.childs.push_back(guiObjs.back());
 		}
@@ -412,7 +457,7 @@ public:
 
 	void run() {
 
-		while (!gameFlags.at(GAME_QUIT)) {
+		while (!gameFlags.at(GAME_QUIT)&&!window.ShouldClose()) {
 			if (gameFlags.at(GAME_PAUSED))
 				drawPauseScreen();
 			else if (gameFlags.at(GAME_START))
@@ -635,10 +680,23 @@ public:
 	~Instance() {
 		for (BoxBase* ptr : guiObjs)
 			delete ptr;
+		if (parallelRun != nullptr) {
+			parallelRun->join();
+			delete parallelRun;
+		}
 	}
 private:
 
 	void drawGameScreen() {
+
+		if (startAudio.IsPlaying()) {
+			startAudio.Stop();
+		}
+		if (!gamesAudio.IsPlaying()) {
+			gamesAudio.Seek(7);
+			gamesAudio.Play();
+		}
+		gamesAudio.Update();
 
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
@@ -663,14 +721,25 @@ private:
 		std::stringstream ss;
 
 		ss << "Wind : " << windSpeed;
-		ss << "\n\t\t Score " << score << std::endl;
-		DrawText(ss.str().c_str(), 10, 10, 10, MAROON);
+		ss << "\nScore " << score << std::endl;
+		DrawText(ss.str().c_str(), window.GetWidth()/2.5,
+			10*window.GetHeight()/GetMonitorHeight(GetCurrentMonitor()),
+			50 * window.GetHeight() / GetMonitorHeight(GetCurrentMonitor()), DARKBLUE);
 
 		window.EndDrawing();
 
 	};
 
 	void drawPauseScreen() {
+
+		if (gamesAudio.IsPlaying()) {
+			gamesAudio.Stop();
+		}
+		if (!startAudio.IsPlaying()) {
+			startAudio.Play();
+		}
+		startAudio.Update();
+
 		window.BeginDrawing();
 		window.ClearBackground();
 		pauseImgTex.Draw(Vec2(0, 0));
@@ -693,6 +762,15 @@ private:
 	};
 
 	void drawGameOver() {
+
+		if (gamesAudio.IsPlaying()) {
+			gamesAudio.Stop();
+		}
+		if (!startAudio.IsPlaying()) {
+			startAudio.Play();
+		}
+		startAudio.Update();
+
 		window.BeginDrawing();
 		window.ClearBackground();
 		pauseImgTex.Draw(Vec2(0, 0));
@@ -706,6 +784,15 @@ private:
 	}
 
 	void drawGameStart() {
+
+		if (gamesAudio.IsPlaying()) {
+			gamesAudio.Stop();
+		}
+		if (!startAudio.IsPlaying()) {
+			startAudio.Play();
+		}
+		startAudio.Update();
+
 		window.BeginDrawing();
 		window.ClearBackground();
 
@@ -766,7 +853,7 @@ private:
 	raylib::Image gameImg;
 	raylib::Texture2D gameImgTex;
 
-
+	
 
 	//Divisions for each pages to be displayed
 	BoxDiv startPage, pausePage, settingsPage, scorePage, outPage;
@@ -787,6 +874,15 @@ private:
 	//Vector of gui objects pointer dynamically created
 	std::vector<BoxBase*> guiObjs;
 
+	//Sound effects objects
+	raylib::Music startAudio;
+	raylib::Music gamesAudio;
+	raylib::Music hoverAudio;
+	raylib::Music clickAudio;
+
+	//An extra thread for loading objects simultaneously
+	std::thread* parallelRun = nullptr;
+
 	double collTimeElapsed = 0;
 	const double CoolDown = 3;
 
@@ -796,11 +892,6 @@ private:
 	double windTimer = 0;
 
 	std::array<bool, FLAG_FULL> gameFlags;
-
-	bool collided = false;
-	bool justCollided = false;
-	bool gamePaused = true;
-	bool arrowReleased = false;
 
 	unsigned score = 0;
 
@@ -829,7 +920,6 @@ int main(){
 		out.close();
 	}
 
-	//UnloadFont(console);
 	return 0;
 
 }

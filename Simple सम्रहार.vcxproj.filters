@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\game clips">
+      <UniqueIdentifier>{680e88e8-0229-489a-ac26-082fcd733b81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\leaves">
+      <UniqueIdentifier>{53734ca8-148e-4534-b03e-a9944a4c13f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simple सम्रहार.cpp">
@@ -24,13 +30,13 @@
     <ClCompile Include="Arrow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Obstacles.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Tools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Target.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsHelp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +53,7 @@
     <ClInclude Include="Tools.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Obstacles.hpp">
+    <ClInclude Include="GraphicsHelp.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -61,6 +67,9 @@
     <None Include="model.iqm">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="arrowascii.iqm">
+      <Filter>Resource Files</Filter>
+    </None>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
@@ -72,633 +81,6 @@
     <Image Include="final_start.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="clip\clip000.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip001.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip002.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip003.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip004.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip005.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip006.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip007.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip008.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip009.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip010.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip011.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip012.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip013.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip014.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip015.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip016.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip017.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip018.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip019.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip020.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip021.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip022.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip023.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip024.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip025.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip026.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip027.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip028.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip029.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip030.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip031.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip032.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip033.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip034.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip035.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip036.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip037.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip038.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip039.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip040.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip041.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip042.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip043.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip044.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip045.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip046.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip047.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip048.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip049.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip050.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip051.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip052.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip053.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip054.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip055.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip056.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip057.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip058.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip059.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip060.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip061.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip062.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip063.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip064.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip065.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip066.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip067.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip068.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip069.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip070.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip071.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip072.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip073.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip074.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip075.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip076.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip077.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip078.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip079.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip080.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip081.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip082.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip083.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip084.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip085.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip086.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip087.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip088.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip089.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip090.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip091.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip092.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip093.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip094.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip095.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip096.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip097.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip098.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip099.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip100.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip101.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip102.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip103.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip104.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip105.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip106.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip107.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip108.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip109.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip110.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip111.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip112.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip113.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip114.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip115.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip116.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip117.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip118.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip119.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip120.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip121.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip122.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip123.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip124.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip125.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip126.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip127.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip128.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip129.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip130.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip131.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip132.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip133.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip134.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip135.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip136.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip137.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip138.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip139.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip140.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip141.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip142.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip143.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip144.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip145.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip146.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip147.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip148.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip149.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip150.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip151.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip152.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip153.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip154.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip155.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip156.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip157.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip158.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip159.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip160.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip161.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip162.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip163.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip164.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip165.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip166.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip167.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip168.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip169.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip170.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip171.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip172.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip173.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip174.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip175.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip176.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip177.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip178.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip179.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip180.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip181.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip182.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip183.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip184.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip185.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip186.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip187.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip188.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip189.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip190.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip191.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip192.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip193.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip194.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip195.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip196.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip197.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip198.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip199.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip200.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip201.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip202.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip203.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip204.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip205.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip206.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip207.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="clip\clip208.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="final_game.jpg">
       <Filter>Resource Files</Filter>
     </Image>
@@ -707,6 +89,663 @@
     </Image>
     <Image Include="final_game.png">
       <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="clip\clip000.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip001.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip002.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip003.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip004.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip005.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip006.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip007.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip008.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip009.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip010.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip011.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip012.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip013.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip014.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip015.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip016.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip017.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip018.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip019.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip020.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip021.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip022.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip023.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip024.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip025.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip026.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip027.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip028.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip029.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip030.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip031.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip032.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip033.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip034.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip035.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip036.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip037.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip038.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip039.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip040.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip041.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip042.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip043.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip044.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip045.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip046.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip047.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip048.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip049.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip050.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip051.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip052.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip053.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip054.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip055.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip056.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip057.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip058.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip059.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip060.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip061.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip062.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip063.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip064.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip065.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip066.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip067.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip068.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip069.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip070.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip071.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip072.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip073.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip074.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip075.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip076.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip077.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip078.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip079.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip080.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip081.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip082.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip083.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip084.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip085.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip086.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip087.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip088.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip089.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip090.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip091.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip092.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip093.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip094.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip095.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip096.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip097.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip098.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip099.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip100.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip101.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip102.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip103.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip104.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip105.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip106.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip107.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip108.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip109.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip110.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip111.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip112.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip113.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip114.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip115.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip116.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip117.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip118.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip119.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip120.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip121.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip122.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip123.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip124.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip125.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip126.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip127.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip128.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip129.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip130.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip131.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip132.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip133.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip134.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip135.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip136.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip137.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip138.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip139.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip140.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip141.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip142.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip143.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip144.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip145.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip146.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip147.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip148.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip149.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip150.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip151.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip152.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip153.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip154.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip155.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip156.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip157.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip158.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip159.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip160.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip161.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip162.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip163.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip164.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip165.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip166.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip167.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip168.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip169.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip170.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip171.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip172.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip173.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip174.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip175.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip176.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip177.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip178.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip179.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip180.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip181.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip182.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip183.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip184.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip185.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip186.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip187.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip188.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip189.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip190.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip191.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip192.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip193.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip194.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip195.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip196.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip197.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip198.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip199.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip200.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip201.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip202.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip203.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip204.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip205.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip206.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip207.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="clip\clip208.png">
+      <Filter>Resource Files\game clips</Filter>
+    </Image>
+    <Image Include="leaves\0001.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0002.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0003.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0004.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0005.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0006.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0007.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0008.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0009.png">
+      <Filter>Resource Files\leaves</Filter>
+    </Image>
+    <Image Include="leaves\0010.png">
+      <Filter>Resource Files\leaves</Filter>
     </Image>
   </ItemGroup>
 </Project>
