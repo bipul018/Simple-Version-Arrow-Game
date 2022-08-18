@@ -44,6 +44,9 @@ private:
 	ModelGen arrowBody;
 	ModelGen arrowHead;
 	ModelGen arrowModel;
+
+	raylib::Texture arrTexture;
+
 	State currState;
 	const State defaultState;
 };
