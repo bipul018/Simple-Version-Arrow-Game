@@ -721,8 +721,10 @@ private:
 		std::stringstream ss;
 
 		ss << "Wind : " << windSpeed;
-		ss << "\n\t\t Score " << score << std::endl;
-		DrawText(ss.str().c_str(), 10, 10, 10, MAROON);
+		ss << "\nScore " << score << std::endl;
+		DrawText(ss.str().c_str(), window.GetWidth()/2.5,
+			10*window.GetHeight()/GetMonitorHeight(GetCurrentMonitor()),
+			50 * window.GetHeight() / GetMonitorHeight(GetCurrentMonitor()), DARKBLUE);
 
 		window.EndDrawing();
 
