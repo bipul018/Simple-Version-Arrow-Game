@@ -33,8 +33,6 @@ std::ostream& operator<<(std::ostream& os, const Vec2& m) {
 	return os;
 }
 
-Font console;
-
 class Instance {
 public:
 
@@ -117,7 +115,7 @@ public:
 
 
 	}
-	
+
 	void resetUI() {
 		if (gameFlags.at(GAME_RESIZE)) {
 
@@ -140,7 +138,11 @@ public:
 			gameImgTex.Load(gameImg);
 			gameFlags.at(GAME_RESIZE) = false;
 		}
-		//Initializing all the gui pages
+		//Initializing all the gui pages except name box if already initialized to temporary objs
+		if (nameBox != nullptr) {
+			nameBox = new TextEdit(*nameBox);
+		}
+
 		for (BoxBase* box : guiObjs)
 			delete box;
 		guiObjs.clear();
@@ -192,11 +194,17 @@ public:
 
 		//Text box for entering name, save pointer for further purposes
 		{
+
 			TextEdit tmp(txt);
 			tmp.SetText("");
-			guiObjs.push_back(new TextEdit(tmp));
+			if (nameBox == nullptr) {
+				guiObjs.push_back(new TextEdit(tmp));
+				nameBox = dynamic_cast<TextEdit*>(guiObjs.back());
+			}
+			else {
+				guiObjs.push_back(nameBox);
+			}
 			startPage.childs.push_back(guiObjs.back());
-			nameBox = dynamic_cast<TextEdit*>(guiObjs.back());
 		}
 
 
@@ -267,10 +275,19 @@ public:
 				window.SetFullscreen(false);
 				window.SetSize(w, h);
 			};
+			std::function<void( int, int)> setsize2 = [this]( int w, int h) {
+				gameFlags.at(FULL_SCREEN) = false;
+				gameFlags.at(GAME_RESIZE) = true;
+				screenHeight = h;
+				screenWidth = w;
+				window.SetFullscreen(false);
+				window.SetSize(w, h);
+			};
 			{
 				TextBox tmp(txt);
 				tmp.SetText("1280x1024");
-				tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 1280, 1024);
+				tmp.onClickRelease = std::bind(setsize2, 1280, 1024);
+				//tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 1280, 1024);
 				guiObjs.push_back(new TextBox(tmp));
 				contain.childs.push_back(guiObjs.back());
 			}
@@ -306,7 +323,7 @@ public:
 		//Score box, save for later too , being dynamic
 		{
 			TextBox tmp(txt);
-			tmp.SetText("Score : 0");
+			tmp.SetText("Score : " + std::to_string(score));
 			tmp.SetBorder(0);
 			guiObjs.push_back(new TextBox(tmp));
 			scorePage.childs.push_back(guiObjs.back());
@@ -829,7 +846,6 @@ int main(){
 		out.close();
 	}
 
-	//UnloadFont(console);
 	return 0;
 
 }

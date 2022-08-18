@@ -98,6 +98,7 @@ private:
 class BoxDiv: virtual public BoxBase {
 public:
 	using BoxBase::BoxBase;
+	virtual ~BoxDiv() = default;
 	void draw() ;
 
 	//Packs itself and resizes itself by children
@@ -146,8 +147,8 @@ public:
 	void SetFont(raylib::Font fval);
 
 	BoxBase& packByContent();
-	//MyText& packByContent();
-	void draw() ;
+	virtual ~MyText() = default;
+	void draw();
 private:
 	
 };
