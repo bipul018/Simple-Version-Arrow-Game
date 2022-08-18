@@ -1,9 +1,11 @@
 #include "Arrow.hpp"
 
 Arrow::Arrow(Vec3 pos, Vec3 front, Vec3 up, float len) :
-	defaultState(pos, front, up, Vec3(D_Length * len + D_Height * 0.035 * len + D_Width * 0.035 * len)) {
+	defaultState(pos, front, up, ModelGen::return_state(ModelGen::ARROW).scale){
+	//defaultState(pos, front, up, Vec3(D_Length * len + D_Height * 0.035 * len + D_Width * 0.035 * len)) {
 	arrowBody = std::move(ModelGen(ModelGen::UNIT_CUBE_CENTER));
 	arrowHead = std::move(ModelGen(ModelGen::UNIT_SQ_PYR_BOTTOM));
+	arrowModel = std::move(ModelGen(ModelGen::ARROW));
 	currState = defaultState;
 }
 
@@ -32,6 +34,10 @@ void Arrow::rotateFrontTo(Vec3 front) {
 void Arrow::setupTransform(){
 
 	State temp = currState;
+
+	arrowModel.get_this_model().transform = state_transition(arrowModel.get_model_state(), currState);
+
+	temp = currState;
 	temp.scale -= D_Length * 0.035 * temp.scale.DotProduct(D_Length);
 	temp.pos -= temp.front * 0.035 * 0.5 * temp.scale.DotProduct(D_Length);
 
@@ -95,6 +101,7 @@ GameModel::State Arrow::getState() const {
 
 void Arrow::draw(){
 	setupTransform();
-	arrowBody.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
-	arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
+	arrowModel.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
+	//arrowBody.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
+	//arrowHead.get_this_model().Draw(Vec3(0, 0, 0), 1.0f, mCol);
 }

@@ -58,6 +58,7 @@ public:
 		UNIT_CUBE_CENTER ,
 		PERSON=0,
 		BOW,
+		ARROW,
 		END_OF_LIST
 	};
 

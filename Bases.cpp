@@ -129,6 +129,7 @@ GameModel::State ModelGen::get_model_state() const{
 void ModelGen::initialize_statics(){
 	fileModelNames[PERSON] = "model.iqm";
 	fileModelNames[BOW] = "model_bow.iqm";
+	fileModelNames[ARROW] = "arrowascii.iqm";
 
 	fileModelStates[PERSON] = GameModel::State(
 		Vec3(0, 0, 0),
@@ -138,8 +139,17 @@ void ModelGen::initialize_statics(){
 		PI / 2);
 
 	fileModelStates[BOW] = GameModel::State(
-		Vec3(0, 0, 0), D_Left * -1, D_Front, Vec3(1, 1, 1), PI / 2
+		Vec3(0, 0, 0),
+		Vec3(D_Left * -1),//.RotateByQuaternion(Vec4::FromAxisAngle(D_Front, PI/6)),
+		D_Front,
+		Vec3(D_Left) + Vec3(D_Front) + Vec3(D_Up), PI / 2
 	);
+	fileModelStates[ARROW] = GameModel::State(
+		Vec3(0, 0, 0),
+		Vec3(D_Left)*-1,
+		Vec3(D_Up),
+		Vec3(D_Left) + Vec3(D_Front) + Vec3(D_Up),
+		PI / 2);
 }
 
 GameModel::State ModelGen::return_state(ModelGen::FileModels model){

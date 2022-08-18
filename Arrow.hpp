@@ -43,6 +43,7 @@ private:
 
 	ModelGen arrowBody;
 	ModelGen arrowHead;
+	ModelGen arrowModel;
 	State currState;
 	const State defaultState;
 };

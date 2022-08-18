@@ -56,8 +56,10 @@ public:
 
 	Instance():arr(D_Front * -1 - D_Left * 0.35+D_Up*5.85, D_Front, D_Up, 1.5),
 		target(D_Front * -1, D_Front * 10 + D_Up * 6  - D_Left * 0.25 , 3),
-		window(screenWidth, screenHeight, "BOO NOOB"),scores(std::function<bool(float,float)>(GreaterThan())) {
+		window(screenWidth, screenHeight, "BOO NOOB"),scores(std::function<bool(float,float)>(GreaterThan())),
+	bowTexture() {
 		bowModel = std::move(ModelGen(ModelGen::BOW));
+		bowTexture.SetMaterial(bowModel.get_this_model().materials[0], MATERIAL_MAP_DIFFUSE);
 		Vec2 size(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
 		
 		screenWidth = size.x;
@@ -835,13 +837,20 @@ private:
 	}
 
 	raylib::Window window;
+
+	//Cameras used
 	MyCamera shootCam;
 	MyCamera arrCam;
 	MyCamera refCam;
 	MyCamera* currCam;
+
+	//Mouse object
 	MyMouse mouse;
+
+	//Model stuff
 	Arrow arr;
 	ModelGen bowModel;
+	raylib::Texture bowTexture;
 
 	//Resources load from files
 	raylib::Image startImg;
