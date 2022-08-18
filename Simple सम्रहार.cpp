@@ -123,6 +123,9 @@ public:
 		gameFlags.at(FULL_SCREEN) = true;
 		windTimer = window.GetTime();
 
+		//Loads from game save file;
+		loadSettings();
+
 		resetUI();
 		//parallelRun = new std::thread([this]() {resetUI(); });
 		//parallelRun->join();
@@ -146,6 +149,8 @@ public:
 			gameImgTex.SetHeight(size.y);
 			gameImgTex.SetWidth(size.x);
 			
+			//Save new settings 
+			saveSettings();
 
 			gameFlags.at(GAME_RESIZE) = false;
 		}
@@ -570,7 +575,6 @@ public:
 						}
 						else {
 							gameFlags.at(GAME_OVER) = true;
-							gameFlags.at(GAME_RESET) = true;
 						}
 						gameFlags.at(ARROW_ON_WALL) = true;
 						gameFlags.at(ARROW_COLLIDE) = true;
@@ -654,9 +658,13 @@ public:
 		else {
 			//Do stuff acc to game paused or over or start
 			if (gameFlags.at(GAME_OVER)) {
-				scores.insert(std::pair<float, std::string>(score, nameBox->GetText()));
-				scoreBox->SetText(std::string("Score : ") + std::to_string(score));
-				scoreBox->packByContent();
+				if (!gameFlags.at(GAME_RESET)) {
+					scores.insert(std::pair<float, std::string>(score, nameBox->GetText()));
+					scoreBox->SetText(std::string("Score : ") + std::to_string(score));
+					scoreBox->packByContent();
+					gameFlags.at(GAME_RESET) = true;
+					saveSettings();
+				}
 			}
 			else if (gameFlags.at(GAME_START)) {
 				if (gameFlags.at(GAME_RESET)) {
@@ -835,6 +843,66 @@ private:
 		else
 			gameFlags.at(flag) = false;
 	}
+
+	void loadSettings() {
+		try {
+			std::fstream file(saveFileName, std::ios::in);
+			if (!file.is_open())
+				return;
+			Vec2 size;
+			file >> size.x >> size.y;
+			if (size.x == 0 || size.y == 0) {
+				gameFlags.at(FULL_SCREEN) = true;
+				window.SetFullscreen(true);
+			}
+			else {
+				screenWidth = size.x;
+				screenHeight = size.y;
+				window.SetFullscreen(false);
+				window.SetSize(size);
+				gameFlags.at(FULL_SCREEN) = false;
+				
+			}
+			gameFlags.at(GAME_RESIZE) = true;
+			while (!file.eof()) {
+				float f;
+				std::string str;
+				file >> std::ws >> str >> std::ws >> f;
+				scores.insert(std::pair<const float, std::string>(f, str));
+			}
+		}
+		catch (...) {
+			throw "Error in reading game file.";
+		}
+	}
+
+	void saveSettings() {
+		try {
+			std::fstream file;
+			while (scores.size() > 5) {
+				std::multimap<float, std::string>::iterator itr = scores.end();
+				--itr;
+				scores.erase((*itr).first);
+			}
+			file.open(saveFileName, std::ios::out);
+			if (gameFlags.at(FULL_SCREEN))
+				file << 0 << ' ' << 0 << std::endl;
+			else
+				file << screenWidth << ' ' << screenHeight << ' ';
+
+
+			for (std::pair<const float, std::string>& x : scores) {
+				file << x.second << std::endl << x.first << std::endl;
+			}
+
+		}
+		catch (...) {
+			throw "Error in writing game file.";
+		}
+
+	}
+
+	const char* saveFileName = "savefile";
 
 	raylib::Window window;
 
