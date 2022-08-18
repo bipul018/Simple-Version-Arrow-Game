@@ -151,11 +151,11 @@
   <ItemGroup>
     <ClInclude Include="Arrow.hpp" />
     <ClInclude Include="Bases.hpp" />
-    <ClInclude Include="Obstacles.hpp" />
     <ClInclude Include="Target.hpp" />
     <ClInclude Include="Tools.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="arrowascii.iqm" />
     <None Include="ClassDiagram.cd" />
     <None Include="model.iqm" />
     <None Include="model_bow.fbx" />
