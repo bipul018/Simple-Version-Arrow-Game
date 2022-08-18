@@ -101,6 +101,8 @@ public:
 		InitAudioDevice();
 		startAudio.Load("game_intro1.mp3");
 		gamesAudio.Load("game_music1.mp3");
+		hoverAudio.Load("hoversound.mp3");
+		clickAudio.Load("clicksound.mp3");
 		
 		startAudio.looping = true;
 		gamesAudio.looping = true;
@@ -188,15 +190,28 @@ public:
 			startPage.childs.push_back(guiObjs.back());
 		}
 
+		
+		txt.onHover = [this](BoxBase& base) {
+			BoxDiv& div = dynamic_cast<BoxDiv&>(base);
+			raylib::Color a = div.GetColor();
+			
+			if (!hoverAudio.IsPlaying()) {
+				hoverAudio.Play();
+				hoverAudio.Update();
+			}
 
-		txt.onHover = [](BoxBase& base) {
 			raylib::Color c(SKYBLUE);
 			c.a = 100;
-			dynamic_cast<BoxDiv&>(base).SetBackColor(c);
+			div.SetBackColor(c);
 		};
 
 		txt.onNothing = [](BoxBase& base) {
 			dynamic_cast<BoxDiv&>(base).SetBackColor(BLANK);
+		};
+
+		std::function<void()> playclick = [this]() {
+			clickAudio.Play();
+			clickAudio.Update();
 		};
 
 		//Text box for entering name, save pointer for further purposes
@@ -219,7 +234,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("PLAY");
-			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_PAUSED);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); unsetFlag(GAME_PAUSED); });
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -227,7 +242,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("HIGH SCORES");
-			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_SCORES);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); setFlag(GAME_SCORES); });
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -235,7 +250,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("SETTINGS");
-			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_SETTINGS);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); setFlag(GAME_SETTINGS); });
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -243,7 +258,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("EXIT");
-			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_QUIT);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); setFlag(GAME_QUIT); });
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
@@ -254,6 +269,7 @@ public:
 
 			{
 				TextBox tmp(txt);
+				tmp.onHover = [](BoxBase&) {};
 				tmp.SetText("WINDOW SIZE : ");
 				tmp.SetBorder(0);
 				guiObjs.push_back(new TextBox(tmp));
@@ -263,7 +279,8 @@ public:
 			{
 				TextBox tmp(txt);
 				tmp.SetText("FULL SCREEN");
-				tmp.onClickRelease = [this](BoxBase&) {
+				tmp.onClickRelease = [this,playclick](BoxBase&) {
+					playclick();
 					gameFlags.at(FULL_SCREEN) = true;
 					gameFlags.at(GAME_RESIZE) = true;
 					screenHeight = GetMonitorHeight(GetCurrentMonitor());
@@ -274,7 +291,8 @@ public:
 				guiObjs.push_back(new TextBox(tmp));
 				contain.childs.push_back(guiObjs.back());
 			}
-			std::function<void( int, int)> setsize = [this]( int w, int h) {
+			std::function<void( int, int)> setsize = [this,playclick]( int w, int h) {
+				playclick();
 				gameFlags.at(FULL_SCREEN) = false;
 				if (screenHeight == h && screenWidth == w)
 					return;
@@ -320,7 +338,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("BACK");
-			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_SETTINGS);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); unsetFlag(GAME_SETTINGS); });
 			guiObjs.push_back(new TextBox(tmp));
 			settingsPage.childs.push_back(guiObjs.back());
 		}
@@ -330,6 +348,7 @@ public:
 		//Score box, save for later too , being dynamic
 		{
 			TextBox tmp(txt);
+			tmp.onHover = [](BoxBase&) {};
 			tmp.SetText("Score : " + std::to_string(score));
 			tmp.SetBorder(0);
 			guiObjs.push_back(new TextBox(tmp));
@@ -343,11 +362,13 @@ public:
 			for (std::pair<const float,std::string>& x : scores) {
 
 				TextBox tmp1(txt);
+				tmp1.onHover = [](BoxBase&) {};
 				tmp1.SetText(x.second);
 				guiObjs.push_back(new TextBox(tmp1));
 				tempdiv1.childs.push_back(guiObjs.back());
 				
 				TextBox tmp2(txt);
+				tmp2.onHover = [](BoxBase&) {};
 				tmp2.SetText(std::to_string(x.first));
 				guiObjs.push_back(new TextBox(tmp2));
 				tempdiv2.childs.push_back(guiObjs.back());
@@ -368,7 +389,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("BACK");
-			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_SCORES);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); unsetFlag(GAME_SCORES); });
 			guiObjs.push_back(new TextBox(tmp));
 			scorePage.childs.push_back(guiObjs.back());
 		}
@@ -394,7 +415,7 @@ public:
 		{
 			TextBox tmp(txt);
 			tmp.SetText("QUIT");
-			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_QUIT);
+			tmp.onClickRelease = std::bind([this, playclick]() {playclick(); setFlag(GAME_QUIT); });
 			guiObjs.push_back(new TextBox(tmp));
 			outPage.childs.push_back(guiObjs.back());
 		}
