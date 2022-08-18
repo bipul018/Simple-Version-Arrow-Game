@@ -9,7 +9,7 @@ public:
 
 	void reset();
 
-	void spin(float angle = PI / 90);
+	void spin(float angle = PI / 45);
 
 	void rotateVertical(float angle = PI / 180);
 

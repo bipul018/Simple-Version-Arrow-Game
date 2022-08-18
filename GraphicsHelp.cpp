@@ -246,7 +246,3 @@ void TextEdit::callActions() {
 		}
 
 }
-
-
-Particles2D::Particles2D() {
-}

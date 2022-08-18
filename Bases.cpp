@@ -71,7 +71,7 @@ ModelGen::ModelGen(FileModels modelid){
 	if (static_cast<int>(modelid) < 0) {
 		switch (modelid) {
 		case UNIT_CYL_CENTER:
-			mesh = new raylib::Mesh(raylib::Mesh::Cylinder(1, 1, 30));
+			mesh = new raylib::Mesh(raylib::Mesh::Cylinder(1, 1, 60));
 			model = new raylib::Model(*mesh);
 			modelID = UNIT_CYL_CENTER;
 			return;

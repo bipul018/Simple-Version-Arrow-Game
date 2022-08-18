@@ -56,10 +56,13 @@ public:
 
 	Instance():arr(D_Front * -1 - D_Left * 0.35+D_Up*5.85, D_Front, D_Up, 1.5),
 		target(D_Front * -1, D_Front * 10 + D_Up * 6  - D_Left * 0.25 , 3),
-		window(screenWidth, screenHeight, "BOO NOOB"),scores(std::function<bool(float,float)>(GreaterThan())){
-	//bowTexture() {
+		window(screenWidth, screenHeight, "samprahar"), scores(std::function<bool(float, float)>(GreaterThan())),
+	bowTexture1("bow-texture1.png"), bowTexture2("bow-texture2.png"), bowTexture3("bow-texture3.png"), bowTexture4("bow-texture4.png") {
 		bowModel = std::move(ModelGen(ModelGen::BOW));
-		//bowTexture.SetMaterial(bowModel.get_this_model().materials[0], MATERIAL_MAP_DIFFUSE);
+		bowTexture4.SetMaterial(bowModel.get_this_model().materials[0], MATERIAL_MAP_DIFFUSE);
+		bowTexture3.SetMaterial(bowModel.get_this_model().materials[0], MATERIAL_MAP_DIFFUSE);
+		bowTexture2.SetMaterial(bowModel.get_this_model().materials[0], MATERIAL_MAP_DIFFUSE);
+		bowTexture1.SetMaterial(bowModel.get_this_model().materials[0], MATERIAL_MAP_DIFFUSE);
 		Vec2 size(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
 		
 		screenWidth = size.x;
@@ -68,6 +71,9 @@ public:
 		window.SetSize(size);
 		window.SetPosition(30, 40);
 		window.SetFullscreen(true);
+
+		appIcon.Load("icon.png");
+		window.SetIcon(appIcon);
 
 		SetExitKey(KEY_NULL);
 
@@ -105,7 +111,10 @@ public:
 		gamesAudio.Load("game_music1.mp3");
 		hoverAudio.Load("hoversound.mp3");
 		clickAudio.Load("clicksound.mp3");
-		
+		arMovAudio.Load("arrow-moving.mp3");
+		//arHitAudio.Load("arrow-moving.mp3");
+		arHitAudio.Load("arrow-hit-wall.mp3");
+
 		startAudio.looping = true;
 		gamesAudio.looping = true;
 
@@ -404,6 +413,14 @@ public:
 		//Quit page Stuff
 		//Use same score box as above
 		{
+		TextBox tmp(txt);
+		tmp.onHover = [](BoxBase&) {};
+		tmp.SetText("Game Over LOL");
+		tmp.SetBorder(0);
+		guiObjs.push_back(new TextBox(tmp));
+		outPage.childs.push_back(guiObjs.back());
+		}
+		{
 			outPage.childs.push_back(scoreBox);
 		}
 
@@ -427,7 +444,6 @@ public:
 			outPage.childs.push_back(guiObjs.back());
 		}
 
-		outPage.autoVertical = false;
 
 		//Sizing start page
 		windiv.childs.push_back(&startPage);
@@ -708,6 +724,23 @@ private:
 		}
 		gamesAudio.Update();
 
+		//if (gameFlags.at(ARROW_RELEASED)) {
+		//	if (gameFlags.at(ARROW_ON_WALL)) {
+		//		if (gameFlags.at(ARROW_COLLIDE))
+		//			arHitAudio.Play();
+		//		if (arMovAudio.IsPlaying())
+		//			arMovAudio.Stop();
+		//		arHitAudio.Update();
+		//	}
+		//	else {
+		//		if (!arMovAudio.IsPlaying())
+		//			arMovAudio.Play();
+		//		if (arHitAudio.IsPlaying())
+		//			arHitAudio.Stop();
+		//		arMovAudio.Update();
+		//	}
+		//}
+
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
 
@@ -853,6 +886,9 @@ private:
 			file >> size.x >> size.y;
 			if (size.x == 0 || size.y == 0) {
 				gameFlags.at(FULL_SCREEN) = true;
+				screenWidth = GetMonitorWidth(GetCurrentMonitor());
+				screenHeight= GetMonitorHeight(GetCurrentMonitor());
+				window.SetSize(screenWidth, screenHeight);
 				window.SetFullscreen(true);
 			}
 			else {
@@ -879,7 +915,7 @@ private:
 	void saveSettings() {
 		try {
 			std::fstream file;
-			while (scores.size() > 5) {
+			while (scores.size() > 4) {
 				std::multimap<float, std::string>::iterator itr = scores.end();
 				--itr;
 				scores.erase((*itr).first);
@@ -918,9 +954,13 @@ private:
 	//Model stuff
 	Arrow arr;
 	ModelGen bowModel;
-	raylib::Texture bowTexture;
+	raylib::Texture bowTexture1;
+	raylib::Texture bowTexture2;
+	raylib::Texture bowTexture3;
+	raylib::Texture bowTexture4;
 
 	//Resources load from files
+	raylib::Image appIcon;
 	raylib::Image startImg;
 	raylib::Texture2D startImgTex;
 	
@@ -956,12 +996,15 @@ private:
 	raylib::Music gamesAudio;
 	raylib::Music hoverAudio;
 	raylib::Music clickAudio;
+	raylib::Music arMovAudio;
+	raylib::Music arHitAudio;
+
 
 	//An extra thread for loading objects simultaneously
 	std::thread* parallelRun = nullptr;
 
 	double collTimeElapsed = 0;
-	const double CoolDown = 3;
+	const double CoolDown = 1.5;
 
 	double arrStretchTime = 0;
 	

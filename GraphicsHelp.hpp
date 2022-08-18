@@ -130,11 +130,3 @@ public:
 private:
 
 };
-
-
-class Particles2D:public BoxDiv {
-public:
-	Particles2D();
-private:
-
-};

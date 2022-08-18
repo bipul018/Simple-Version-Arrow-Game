@@ -1,13 +1,13 @@
 #include "Arrow.hpp"
 
 Arrow::Arrow(Vec3 pos, Vec3 front, Vec3 up, float len) :
-	defaultState(pos, front, up, ModelGen::return_state(ModelGen::ARROW).scale){
-	//arrTexture(){
+	defaultState(pos, front, up, ModelGen::return_state(ModelGen::ARROW).scale),
+	arrTexture("arrow-texture.png") {
 	//defaultState(pos, front, up, Vec3(D_Length * len + D_Height * 0.035 * len + D_Width * 0.035 * len)) {
 	arrowBody = std::move(ModelGen(ModelGen::UNIT_CUBE_CENTER));
 	arrowHead = std::move(ModelGen(ModelGen::UNIT_SQ_PYR_BOTTOM));
 	arrowModel = std::move(ModelGen(ModelGen::ARROW));
-	//arrTexture.SetMaterial(arrowModel.get_this_model().materials[0], MATERIAL_MAP_DIFFUSE);
+	arrTexture.SetMaterial(arrowModel.get_this_model().materials[0], MATERIAL_MAP_DIFFUSE);
 	currState = defaultState;
 }
 

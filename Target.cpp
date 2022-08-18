@@ -9,10 +9,10 @@ Target::Target(Vec3 normal, Vec3 center, float radius) :
 		models.at(i) = ModelGen(ModelGen::UNIT_CYL_CENTER);
 	}
 	colors.at(0) = BLACK;
-	colors.at(1) = BLUE;
-	colors.at(2) = RED;
-	colors.at(3) = ORANGE;
-	colors.at(4) = WHITE;
+	colors.at(1) = BROWN;
+	colors.at(2) = BLUE;
+	colors.at(3) = BEIGE;
+	colors.at(4) = GOLD;
 }
 
 void Target::draw() {
