@@ -5,3 +5,5 @@
 **/Win32
 /raylib
 /raylib-cpp
+/stb
+/pl_mpeg

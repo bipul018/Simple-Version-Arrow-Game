@@ -244,16 +244,37 @@ BoxDiv& BoxDiv::packChildren()  {
 	double maxx = 0;
 	for (BoxBase* ptr : childs) {
 		ptr->packByContent();
-		maxy += ptr->getSize().y + m_padding;
-		maxx = (ptr->getSize().x > maxx) ? ptr->getSize().x : maxx;
+		if (autoVertical) {
+			maxy += ptr->getSize().y + m_padding;
+			maxx = (ptr->getSize().x > maxx) ? ptr->getSize().x : maxx;
+		}
+		else {
+			maxx += ptr->getSize().x + m_padding;
+			maxy = (ptr->getSize().y > maxy) ? ptr->getSize().y : maxy;
+		}
 	}
-	float y = BoxDiv(getPosition(), Vec2(0,maxy)).setDynamicPos(*this, 0.5, 0.5).getPosition().y;
+	float y=0;
+	if (autoVertical)
+		y = BoxDiv(getPosition(), Vec2(0, maxy)).setDynamicPos(*this, 0.5, 0.5).getPosition().y;
+	else
+		y = BoxDiv(getPosition(), Vec2(maxx, 0)).setDynamicPos(*this, 0.5, 0.5).getPosition().x;
 	for (BoxBase* ptr : childs) {
-		if (autoResizeWidth)
-			ptr->setSize(Vec2(maxx, ptr->getSize().y));
+		if (autoResizeDim) {
+			if (autoVertical)
+				ptr->setSize(Vec2(maxx, ptr->getSize().y));
+			else
+				ptr->setSize(Vec2(ptr->getSize().x, maxy));
+
+		}
 		ptr->setDynamicPos(*this, 0.5, 0.5);
-		ptr->setPosition(Vec2(ptr->getPosition().x, y));
-		y += ptr->getSize().y + m_padding;
+		if (!autoVertical) {
+			ptr->setPosition(Vec2(y, ptr->getPosition().y));
+			y += ptr->getSize().x + m_padding;
+		}
+		else {
+			ptr->setPosition(Vec2(ptr->getPosition().x, y));
+			y += ptr->getSize().y + m_padding;
+		}
 		
 	}
 	return *this;

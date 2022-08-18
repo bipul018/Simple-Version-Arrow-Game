@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <map>
 
 //Custom Include Files
 #include "Tools.hpp"
@@ -48,12 +49,16 @@ public:
 		GAME_START,			//For when game is in starting condition
 		GAME_QUIT,				//For quitting the game
 		GAME_SETTINGS,			//When settings page is displayed
+		GAME_SCORES,			//When scores page is to be displayed
+		GAME_RESET,				//Made to know if to reset the game 
+		GAME_RESIZE,			//Indicates that game has just been resized
+		FULL_SCREEN,			//Indicates that game is fullscreen
 		FLAG_FULL
 	};
 
 	Instance():arr(D_Front * -1 - D_Left * 0.35+D_Up*5.85, D_Front, D_Up, 1.5),
 		target(D_Front * -1, D_Front * 10 + D_Up * 6  - D_Left * 0.25 , 3),
-		window(screenWidth, screenHeight, "BOO NOOB") {
+		window(screenWidth, screenHeight, "BOO NOOB"),scores(std::function<bool(float,float)>(GreaterThan())) {
 		bowModel = std::move(ModelGen(ModelGen::BOW));
 		Vec2 size(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
 		
@@ -81,47 +86,74 @@ public:
 		mouse.hideCursor().disableCursor();
 		window.SetTargetFPS(120);
 
+		scores.clear();
+
 		//Image and resources load
 		startImg.Load("final_start.png");
 		startImgTex.Load(startImg);
 
+		pauseImg.Load("final_pause.png");
+		pauseImgTex.Load(pauseImg);
+		
+		gameImg.Load("final_game.png");
+		gameImgTex.Load(gameImg);
 
-		/*
-			Load Image Clips	
-		*/
-		std::string clip = "clip/clip";
-		std::string oneZero = "0";
-		std::string twoZero = "00";
-		std::string png = ".png";
-		for (int i = 0; i <= 208; i++) {
-			if ((int)log(i) == 0 || i == 0) {
-				std::string newS = clip + twoZero + std::to_string(i) + png;
-				vec.push_back(LoadImage(newS.c_str()));
-			}
-			else if ((int)log(i) == 1) {
-				std::string newS = clip + oneZero + std::to_string(i) + png;
-				vec.push_back(LoadImage(newS.c_str()));
-			}
-			else {
-				std::string newS = clip + std::to_string(i) + png;
-				vec.push_back(LoadImage(newS.c_str()));
-			}
-		}
+
+
+		arr.reset();
+		target.reset();
 
 		for (auto& x : gameFlags) {
 			x = false;
 		}
 		gameFlags.at(GAME_START) = true;
-		
+		gameFlags.at(GAME_RESET) = true;
+		gameFlags.at(GAME_RESIZE) = true;
+		gameFlags.at(FULL_SCREEN) = true;
 		windTimer = window.GetTime();
 
+
+		resetUI();
+
+
+	}
+	
+	void resetUI() {
+		if (gameFlags.at(GAME_RESIZE)) {
+
+			Vec2 size = window.GetSize();
+
+			if (gameFlags.at(FULL_SCREEN))
+				size = Vec2(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
+
+			//Resizing the images and thier textures
+			startImg.Resize(size.x, size.y);
+			pauseImg.Resize(size.x, size.y);
+			gameImg.Resize(size.x, size.y);
+
+			startImgTex.Unload();
+			pauseImgTex.Unload();
+			gameImgTex.Unload();
+
+			startImgTex.Load(startImg);
+			pauseImgTex.Load(pauseImg);
+			gameImgTex.Load(gameImg);
+			gameFlags.at(GAME_RESIZE) = false;
+		}
 		//Initializing all the gui pages
+		for (BoxBase* box : guiObjs)
+			delete box;
+		guiObjs.clear();
+
 		BoxDiv windiv = getWindowDiv();
 		startPage = windiv;
 		startPage.SetBorder(0);
 		startPage.SetPadding(4 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
 		pausePage = startPage;
 		settingsPage = startPage;
+		scorePage = startPage;
+		outPage = startPage;
+
 		TextBox txt;
 		txt.SetText("Enter string here");
 		txt.SetFontSize(30 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
@@ -129,14 +161,16 @@ public:
 		txt.SetBorder(5 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
 		txt.SetPadding(9 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor()));
 
-		std::function<void(BoxBase&,Flags)> setbind = [this](BoxBase& box, Flags flag) {
+		std::function<void(BoxBase&, Flags)> setbind = [this](BoxBase& box, Flags flag) {
 			setFlag(flag);
 		};
-		
-		std::function<void(BoxBase&,Flags)> unsetbind = [this](BoxBase& box, Flags flag) {
+
+		std::function<void(BoxBase&, Flags)> unsetbind = [this](BoxBase& box, Flags flag) {
 			unsetFlag(flag);
 		};
 
+
+		//Start Page stuff
 		{
 			TextBox tmp(txt);
 			tmp.SetText("Enter Your Name");
@@ -156,21 +190,33 @@ public:
 			dynamic_cast<BoxDiv&>(base).SetBackColor(BLANK);
 		};
 
+		//Text box for entering name, save pointer for further purposes
 		{
 			TextEdit tmp(txt);
 			tmp.SetText("");
 			guiObjs.push_back(new TextEdit(tmp));
 			startPage.childs.push_back(guiObjs.back());
+			nameBox = dynamic_cast<TextEdit*>(guiObjs.back());
 		}
-		
+
+
+		//Pause screen stuff
 		{
 			TextBox tmp(txt);
-			tmp.SetText("RESUME");
+			tmp.SetText("PLAY");
 			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_PAUSED);
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
-		
+
+		{
+			TextBox tmp(txt);
+			tmp.SetText("HIGH SCORES");
+			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_SCORES);
+			guiObjs.push_back(new TextBox(tmp));
+			pausePage.childs.push_back(guiObjs.back());
+		}
+
 		{
 			TextBox tmp(txt);
 			tmp.SetText("SETTINGS");
@@ -178,7 +224,7 @@ public:
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
-		
+
 		{
 			TextBox tmp(txt);
 			tmp.SetText("EXIT");
@@ -186,7 +232,67 @@ public:
 			guiObjs.push_back(new TextBox(tmp));
 			pausePage.childs.push_back(guiObjs.back());
 		}
-		
+
+		//Settings page stuff
+		{
+			BoxDiv contain(settingsPage);
+
+			{
+				TextBox tmp(txt);
+				tmp.SetText("WINDOW SIZE : ");
+				tmp.SetBorder(0);
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			
+			{
+				TextBox tmp(txt);
+				tmp.SetText("FULL SCREEN");
+				tmp.onClickRelease = [this](BoxBase&) {
+					gameFlags.at(FULL_SCREEN) = true;
+					gameFlags.at(GAME_RESIZE) = true;
+					screenHeight = GetMonitorHeight(GetCurrentMonitor());
+					screenWidth= GetMonitorWidth(GetCurrentMonitor());
+					window.SetSize(screenWidth, screenHeight);
+					window.SetFullscreen(true);
+				};
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			std::function<void(BoxBase&, int, int)> setsize = [this](BoxBase&, int w, int h) {
+				gameFlags.at(FULL_SCREEN) = false;
+				gameFlags.at(GAME_RESIZE) = true;
+				screenHeight = h;
+				screenWidth = w;
+				window.SetFullscreen(false);
+				window.SetSize(w, h);
+			};
+			{
+				TextBox tmp(txt);
+				tmp.SetText("1280x1024");
+				tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 1280, 1024);
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			{
+				TextBox tmp(txt);
+				tmp.SetText("1280x720");
+				tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 1280, 720);
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			{
+				TextBox tmp(txt);
+				tmp.SetText("800x600");
+				tmp.onClickRelease = std::bind(setsize, std::placeholders::_1, 800, 600);
+				guiObjs.push_back(new TextBox(tmp));
+				contain.childs.push_back(guiObjs.back());
+			}
+			contain.autoVertical = false;
+			guiObjs.push_back(new BoxDiv(contain));
+			settingsPage.childs.push_back(guiObjs.back());
+		}
+
 		{
 			TextBox tmp(txt);
 			tmp.SetText("BACK");
@@ -194,28 +300,113 @@ public:
 			guiObjs.push_back(new TextBox(tmp));
 			settingsPage.childs.push_back(guiObjs.back());
 		}
+		
+		
+		//Scores page Stuff
+		//Score box, save for later too , being dynamic
+		{
+			TextBox tmp(txt);
+			tmp.SetText("Score : 0");
+			tmp.SetBorder(0);
+			guiObjs.push_back(new TextBox(tmp));
+			scorePage.childs.push_back(guiObjs.back());
+			scoreBox = dynamic_cast<TextBox*>(guiObjs.back());
+		}
+		{
+			BoxDiv tempdiv1(scorePage);
+			BoxDiv tempdiv2(scorePage);
 
+			for (std::pair<const float,std::string>& x : scores) {
+
+				TextBox tmp1(txt);
+				tmp1.SetText(x.second);
+				guiObjs.push_back(new TextBox(tmp1));
+				tempdiv1.childs.push_back(guiObjs.back());
+				
+				TextBox tmp2(txt);
+				tmp2.SetText(std::to_string(x.first));
+				guiObjs.push_back(new TextBox(tmp2));
+				tempdiv2.childs.push_back(guiObjs.back());
+
+			}
+			BoxDiv newDiv(scorePage);
+			newDiv.SetBorder((5 * window.GetSize().x / GetMonitorWidth(GetCurrentMonitor())));
+			newDiv.autoVertical = false;
+			
+			guiObjs.push_back(new BoxDiv(tempdiv1));
+			newDiv.childs.push_back(guiObjs.back());
+			guiObjs.push_back(new BoxDiv(tempdiv2));
+			newDiv.childs.push_back(guiObjs.back());
+
+			guiObjs.push_back(new BoxDiv(newDiv));
+			scorePage.childs.push_back(guiObjs.back());
+		} 
+		{
+			TextBox tmp(txt);
+			tmp.SetText("BACK");
+			tmp.onClickRelease = std::bind(unsetbind, std::placeholders::_1, GAME_SCORES);
+			guiObjs.push_back(new TextBox(tmp));
+			scorePage.childs.push_back(guiObjs.back());
+		}
+		
+		//Quit page Stuff
+		//Use same score box as above
+		{
+			outPage.childs.push_back(scoreBox);
+		}
+
+		{
+			TextBox tmp(txt);
+			tmp.SetText("RESTART");
+			tmp.onClickRelease = [this](BoxBase&) {
+				unsetFlag(GAME_OVER);
+				setFlag(GAME_START);
+				setFlag(GAME_RESET);
+			};
+			guiObjs.push_back(new TextBox(tmp));
+			outPage.childs.push_back(guiObjs.back());
+		}
+
+		{
+			TextBox tmp(txt);
+			tmp.SetText("QUIT");
+			tmp.onClickRelease = std::bind(setbind, std::placeholders::_1, GAME_QUIT);
+			guiObjs.push_back(new TextBox(tmp));
+			outPage.childs.push_back(guiObjs.back());
+		}
+
+		outPage.autoVertical = false;
+
+		//Sizing start page
 		windiv.childs.push_back(&startPage);
 		windiv.packByContent();
 		windiv.setMouse(&mouse);
 		windiv.childs.pop_back();
-		
+
+		//Sizing pause page
 		windiv.childs.push_back(&pausePage);
 		windiv.packByContent();
 		windiv.setMouse(&mouse);
 		windiv.childs.pop_back();
-		
+
+		//Sizing settings page
 		windiv.childs.push_back(&settingsPage);
 		windiv.packByContent();
 		windiv.setMouse(&mouse);
 		windiv.childs.pop_back();
 
-		
+		//Sizing scores page
+		windiv.childs.push_back(&scorePage);
+		windiv.packByContent();
+		windiv.setMouse(&mouse);
+		windiv.childs.pop_back();
 
 
-	}
-	
-	void restart() {
+		//Sizing quit page
+		windiv.childs.push_back(&outPage);
+		windiv.packByContent();
+		windiv.setMouse(&mouse);
+		windiv.childs.pop_back();
 
 	}
 
@@ -238,28 +429,32 @@ public:
 	void eventHandle() {
 
 		//Event handling stuff
-
+		if (gameFlags.at(GAME_RESIZE))
+			resetUI();
 
 		//Do stuff if game is not playable
 		if (gameFlags.at(GAME_PAUSED) || gameFlags.at(GAME_START) || gameFlags.at(GAME_OVER)) {
-			if (IsKeyReleased(KEY_ESCAPE)) {
-				gameFlags.at(GAME_PAUSED) = false;
-				gameFlags.at(GAME_START) = false;
-				gameFlags.at(GAME_OVER) = false;
-			}
+			
 			if (mouse.isCursorHidden()) {
 				mouse.showCursor().enableCursor();
 			}
-			if (gameFlags.at(GAME_START))
+			if (gameFlags.at(GAME_START)) {
 				startPage.callActions();
+				if (IsKeyReleased(KEY_ENTER)) {
+					gameFlags.at(GAME_START) = false;
+					gameFlags.at(GAME_PAUSED) = true;
+				}
+			}
 			else if (gameFlags.at(GAME_PAUSED)) {
 				if (gameFlags.at(GAME_SETTINGS))
 					settingsPage.callActions();
+				else if (gameFlags.at(GAME_SCORES))
+					scorePage.callActions();
 				else
 					pausePage.callActions();
 			}
 			else if (gameFlags.at(GAME_OVER))
-				settingsPage.callActions();
+				outPage.callActions();
 
 		}
 
@@ -328,6 +523,7 @@ public:
 						}
 						else {
 							gameFlags.at(GAME_OVER) = true;
+							gameFlags.at(GAME_RESET) = true;
 						}
 						gameFlags.at(ARROW_ON_WALL) = true;
 						gameFlags.at(ARROW_COLLIDE) = true;
@@ -411,8 +607,19 @@ public:
 		else {
 			//Do stuff acc to game paused or over or start
 			if (gameFlags.at(GAME_OVER)) {
-				score = 0;
-				windSpeed = 0;
+				scores.insert(std::pair<float, std::string>(score, nameBox->GetText()));
+				scoreBox->SetText(std::string("Score : ") + std::to_string(score));
+				scoreBox->packByContent();
+			}
+			else if (gameFlags.at(GAME_START)) {
+				if (gameFlags.at(GAME_RESET)) {
+					score = 0;
+					windSpeed = 0;
+					arr.reset();
+					target.reset();
+					resetUI();
+					gameFlags.at(GAME_RESET) = false;
+				}
 			}
 			if (IsKeyDown(KEY_BACK))
 				gameFlags.at(GAME_QUIT) = true;
@@ -435,9 +642,9 @@ private:
 
 		window.BeginDrawing();
 		window.ClearBackground(SKYBLUE);
-		currCam->BeginMode();
 
-		DrawPlane(Vec3(0, 0, 0), Vec2(20, 20), GREEN);
+		gameImgTex.Draw(Vec2(0, 0));
+		currCam->BeginMode();
 
 		
 		arr.draw();
@@ -447,12 +654,12 @@ private:
 
 
 		currCam->EndMode();
-
-		Vec2 circle = currCam->GetWorldToScreen(target.getProj(arr.getFront(), arr.getHead()));
-		DrawCircleLines(circle.x, circle.y, 10, RED);
-		DrawLine(circle.x - 5, circle.y, circle.x + 5, circle.y, RED);
-		DrawLine(circle.x, circle.y - 5, circle.x, circle.y + 5, RED);
-
+		if (!gameFlags.at(ARROW_RELEASED)) {
+			Vec2 circle = currCam->GetWorldToScreen(target.getProj(arr.getFront(), arr.getHead()));
+			DrawCircleLines(circle.x, circle.y, 10, RED);
+			DrawLine(circle.x - 5, circle.y, circle.x + 5, circle.y, RED);
+			DrawLine(circle.x, circle.y - 5, circle.x, circle.y + 5, RED);
+		}
 		std::stringstream ss;
 
 		ss << "Wind : " << windSpeed;
@@ -466,10 +673,18 @@ private:
 	void drawPauseScreen() {
 		window.BeginDrawing();
 		window.ClearBackground();
-		startImgTex.Draw(Vec2(0, 0));
+		pauseImgTex.Draw(Vec2(0, 0));
 		if (gameFlags.at(GAME_PAUSED)) {
 			if (gameFlags.at(GAME_SETTINGS))
 				settingsPage.draw();
+			else if (gameFlags.at(GAME_QUIT))
+				outPage.draw();
+			else if (gameFlags.at(GAME_SCORES)) {
+				BoxDiv glob = getWindowDiv();
+				glob.childs.push_back(&scorePage);
+				glob.packChildren();
+				scorePage.draw();
+			}
 			else
 				pausePage.draw();
 		}
@@ -480,8 +695,11 @@ private:
 	void drawGameOver() {
 		window.BeginDrawing();
 		window.ClearBackground();
-		startImgTex.Draw(Vec2(0, 0));
-		settingsPage.draw();
+		pauseImgTex.Draw(Vec2(0, 0));
+		BoxDiv glob = getWindowDiv();
+		glob.childs.push_back(&outPage);
+		glob.packChildren();
+		outPage.draw();
 
 		window.EndDrawing();
 
@@ -490,15 +708,12 @@ private:
 	void drawGameStart() {
 		window.BeginDrawing();
 		window.ClearBackground();
-	
-		if (frameCount <= 208) {
-			DrawTexture(LoadTextureFromImage(vec[frameCount++]), 0, 0, RAYWHITE);
-		}
-		else {
-			startImgTex.Draw(Vec2(0, 0));
-			startPage.draw();
-		}
-		
+
+
+		startImgTex.Draw(Vec2(0, 0));
+		startPage.draw();
+
+
 		window.EndDrawing();
 
 	}
@@ -541,11 +756,33 @@ private:
 	Arrow arr;
 	ModelGen bowModel;
 
+	//Resources load from files
 	raylib::Image startImg;
 	raylib::Texture2D startImgTex;
+	
+	raylib::Image pauseImg;
+	raylib::Texture2D pauseImgTex;
+	
+	raylib::Image gameImg;
+	raylib::Texture2D gameImgTex;
+
+
 
 	//Divisions for each pages to be displayed
-	BoxDiv startPage, pausePage, settingsPage;
+	BoxDiv startPage, pausePage, settingsPage, scorePage, outPage;
+
+	//Pointer of text field for name
+	TextEdit* nameBox;
+	TextBox* scoreBox;
+
+	//Map of scores and names plus a helful greater than comparator
+	class GreaterThan {
+	public:
+		bool operator()(float a, float b) const {
+			return b < a;
+		}
+	};
+	std::map<float, std::string, std::function<bool(float, float)>> scores;
 
 	//Vector of gui objects pointer dynamically created
 	std::vector<BoxBase*> guiObjs;
@@ -569,10 +806,7 @@ private:
 
 	Target target;
 
-	std::vector<Image> vec;
 	
-	/******/
-	int frameCount = 0;
 };
 
 

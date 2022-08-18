@@ -1,8 +1,8 @@
 #include "Bases.hpp"
 
 
-extern int screenWidth = 1800;
-extern int screenHeight = 900;
+extern int screenWidth = 1080;
+extern int screenHeight = 720;
 
 const char* ModelGen::fileModelNames[END_OF_LIST];
 GameModel::State ModelGen::fileModelStates[END_OF_LIST];
